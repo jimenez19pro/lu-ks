@@ -1,0 +1,1 @@
+window.LUKS_FB={apiKey:"AIzaSyCXuErTuCukrsA0ndRQfjJg0beeAboWqSc",authDomain:"lu-ks-ia.firebaseapp.com",projectId:"lu-ks-ia",storageBucket:"lu-ks-ia.firebasestorage.app",messagingSenderId:"858217736463",appId:"1:858217736463:web:dd069956bd5f7c24ac367a"};
