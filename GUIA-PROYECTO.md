@@ -49,7 +49,7 @@ Funciones principales: movimientos (gastos/ingresos/transferencias), cuentas y t
 ### Lu-Ks Tienda (para tiendas de barrio, de pago)
 App aparte en la carpeta `tienda/` (su propio ícono naranja, manifest y service worker). Usa el mismo Firebase.
 
-Funciones: caja del día y cierre de caja (base, esperado vs contado, resumen del día por WhatsApp), ventas por productos o monto rápido, cálculo de vuelto, recibo por WhatsApp (todos los mensajes de WhatsApp tienen formato profesional: recibo con N.º, comprobante de abono, estado de cuenta, pedido y resumen detallado; funciones reciboTxt, abonoTxt, cobroTxt, pdEnviar, resumenTxt), y además se envían como **comprobantes en imagen (PNG) o PDF** desde una hoja de vista previa (funciones renderDoc con canvas, docRecibo/docAbono/docCobro/docPedido/docResumen, makePdf sin librerías, compartir/shareFile con el menú Compartir del iPhone), fiados (cupo, abonos, "para cobrar hoy" con recordatorio por WhatsApp), inventario (costos, margen, existencias, alerta de "por acabarse", **escáner de código de barras** con BarcodeDetector o ZXing, **ventas por libra/kilo**), aviso de **"te subió el costo"** con precio sugerido, gastos por categoría (**gastos fijos** —arriendo, empleados, servicios— van aparte: no se restan de la ganancia del día y solo bajan la caja si se pagan "De la caja"; método "👛 Aparte"), proveedores (crédito, pagos, día de visita, **pedido por WhatsApp**), **Cobro por transferencia** (Ajustes → llave Bre-B, Nequi, Daviplata, titular y foto del QR del banco guardada en `t_conf/qr`; pantalla "📲 Mostrar QR / llave para cobrar" en ventas por transferencia y en fiados; los datos de pago salen en el estado de cuenta y en recibos de fiado; funciones `payData`, `cobroQR`, `pagoTxt`), reportes (ganancia estimada, métodos de pago, 14 días, más vendidos, cierres), **empleados** (invitación por enlace, aprobación del dueño, no ven ganancias ni costos, no pueden borrar), respaldo JSON, borrar datos, **licencias** (pantalla de pago).
+Funciones: caja del día y cierre de caja (base, esperado vs contado, resumen del día por WhatsApp), ventas por productos o monto rápido, cálculo de vuelto, recibo por WhatsApp (todos los mensajes de WhatsApp tienen formato profesional: recibo con N.º, comprobante de abono, estado de cuenta, pedido y resumen detallado; funciones reciboTxt, abonoTxt, cobroTxt, pdEnviar, resumenTxt), y además se envían como **comprobantes en imagen (PNG) o PDF** desde una hoja de vista previa (funciones renderDoc con canvas, docRecibo/docAbono/docCobro/docPedido/docResumen, makePdf sin librerías, compartir/shareFile con el menú Compartir del iPhone), **precios por cantidad** (hasta 4 por producto, p. ej. "Paca" 12 und a $32.000; al vender se aplican solos combinando paquetes de mayor a menor y el resto a precio normal; botones "＋ Paca" en el carrito; se guardan en el producto como `pk:[{n,q,pv}]` y se copian en cada ítem de la venta; funciones `pks`, `pkCalc`, `lt`, `pkTxt`, `detTxt`, `pkRow`, `pkHint`), fiados (cupo, abonos, "para cobrar hoy" con recordatorio por WhatsApp), inventario (costos, margen, existencias, alerta de "por acabarse", **escáner de código de barras** con BarcodeDetector o ZXing, **ventas por libra/kilo**), aviso de **"te subió el costo"** con precio sugerido, gastos por categoría (**gastos fijos** —arriendo, empleados, servicios— van aparte: no se restan de la ganancia del día y solo bajan la caja si se pagan "De la caja"; método "👛 Aparte"), proveedores (crédito, pagos, día de visita, **pedido por WhatsApp**), **Cobro por transferencia** (Ajustes → llave Bre-B, Nequi, Daviplata, titular y foto del QR del banco guardada en `t_conf/qr`; pantalla "📲 Mostrar QR / llave para cobrar" en ventas por transferencia y en fiados; los datos de pago salen en el estado de cuenta y en recibos de fiado; funciones `payData`, `cobroQR`, `pagoTxt`), reportes (ganancia estimada, métodos de pago, 14 días, más vendidos, cierres), **empleados** (invitación por enlace, aprobación del dueño, no ven ganancias ni costos, no pueden borrar), respaldo JSON, borrar datos, **licencias** (pantalla de pago).
 
 ---
 
@@ -144,7 +144,7 @@ Truco para el iPhone: en el editor de reglas es difícil borrar todo; es más f�
 
 ## 8. Pruebas automáticas (para Claude)
 
-En `pruebas/`: `mockfb.js` (Firebase falso: auth, firestore con batch, onSnapshot de colecciones y documentos, messaging) y scripts de Playwright (`ttienda.js`, `tt3.js` = 8 mejoras + empleados, `tlic.js` = licencias, `tadm.js` = panel admin (solo v2), `tgar.js`, `tdev.js`, `tcol.js`, etc.).
+En `pruebas/`: `mockfb.js` (Firebase falso: auth, firestore con batch, onSnapshot de colecciones y documentos, messaging) y scripts de Playwright (`ttienda.js`, `tt3.js` = 8 mejoras + empleados, `tlic.js` = licencias, `tadm.js` = panel admin, `tpk.js` = precios por cantidad, `tgar.js`, `tdev.js`, `tcol.js`, etc.).
 - Copiar `pruebas/*` a la raíz del proyecto, construir (`python3 build_pub.py`) y ejecutar `node ttienda.js`.
 - Sirven `pub/` con `python3 -m http.server`, bloquean service workers (`serviceWorkers:'block'`) y reemplazan Firebase por el mock.
 - En la tienda, las pruebas le dan licencia a la cuenta de prueba escribiendo `licencias/{uid}` con un batch.
@@ -172,39 +172,18 @@ En `pruebas/`: `mockfb.js` (Firebase falso: auth, firestore con batch, onSnapsho
 
 ---
 
-## 11. PENDIENTE: mejoras hechas pero NO publicadas (`pendientes-v2.zip`)
+## 11. Versión 2 de la tienda — PUBLICADA (20 oct 2026)
 
-Están construidas y probadas, pero Jose decidió dejarlas para después:
-1. **Panel de administrador** (en Lu-Ks Tienda → Ajustes): ver solicitudes, activar/renovar (1 mes, fundador, 1 año, prueba 30 días, gratis siempre; se suma desde el vencimiento), desactivar, cobrar por WhatsApp, ingreso mensual, cupos de fundador y editar precios (`config/tienda`: precio, precioMes, precioAno, precioFund, cuposFund).
+Ya está en producción:
+1. **Panel de administrador** (Lu-Ks Tienda → Ajustes → 🛠️ Panel de administrador): solicitudes, activar/renovar (1 mes, fundador, 1 año, prueba 30 días, gratis siempre; se suma desde el vencimiento), desactivar, cobrar por WhatsApp, ingreso mensual, cupos de fundador y editar precios (`config/tienda`: precio, precioMes, precioAno, precioFund, cuposFund).
 2. **Prueba gratis automática de 30 días** (botón en la pantalla de pago; una sola vez por cuenta; guarda `prueba:true` y `vence` como Timestamp).
 3. **Aviso de renovación** 5 días antes de vencer el plan o la prueba.
 4. **Productos por vencer** (fecha de vencimiento al llegar mercancía, lotes por fecha, aviso en Caja, Oferta / Ya se vendió / Se botó → pérdida sin afectar la caja).
 5. `lic.js` entiende pruebas (`vence`).
 
-**Para publicarlas:**
-1. Agregar a las reglas (antes de las dos llaves finales):
-```
-    function isAdmin() {
-      return request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
-    }
-    match /admins/{aid} {
-      allow read: if request.auth != null && request.auth.uid == aid;
-    }
-    match /licencias/{lid} {
-      allow read, write: if isAdmin();
-      allow create: if request.auth != null && request.auth.uid == lid
-        && request.resource.data.keys().hasOnly(['prueba','vence','email','nombre','tel','ts'])
-        && request.resource.data.prueba == true
-        && request.resource.data.vence is timestamp
-        && request.resource.data.vence <= request.time + duration.value(31, 'd');
-    }
-    match /solicitudes/{sid} {
-      allow create, update: if request.auth != null && request.auth.uid == sid;
-      allow read, delete: if isAdmin();
-    }
-    match /config/{cdoc} {
-      allow write: if isAdmin();
-    }
-```
-2. Crear en Firestore la colección `admins` con un documento cuyo ID sea el código de Jose (el mismo de su licencia) y campo `nombre`.
-3. Subir `pub/index.html` (raíz), `pub/tienda/index.html` (carpeta tienda) y el `codigo-fuente.zip` de la v2.
+- Las reglas de la sección 5 ya incluyen (agregado al final) el bloque de `isAdmin`, `admins`, `licencias/{lid}`, `solicitudes` y `config` escritura para admin. Copia completa en `pubsrc/tienda/reglas-firestore.txt`.
+- Colección **`admins`** creada en la raíz con el documento de Jose (ID = su código `INbBN72DK3UHDOLWj5g4tKXkk5P2`, campo `Nombre`).
+- **Activar clientes ahora se hace desde el Panel de administrador** (ya no hace falta crear documentos a mano en Firestore).
+
+## 12. Precios por cantidad — PUBLICADO (20 oct 2026)
+En Inventario → producto → "🏷️ Precios por cantidad". Muestra cuánto sale cada unidad, cuánto ahorra el cliente y cuánto ganas. En la venta se aplica solo (ej. 18 gaseosas = 1 paca + 1 media docena). Recibo, comprobante, reportes y ganancia ya lo tienen en cuenta. Solo cambió `tienda/index.html`; no requiere cambios en las reglas de Firebase.
