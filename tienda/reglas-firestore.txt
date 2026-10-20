@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+    match /users/{uid}/{col}/{doc} {
+      allow read, create, update: if request.auth != null
+        && col in ['t_prod','t_venta','t_cli','t_fmov','t_gasto','t_prov','t_pmov','t_caja','t_conf']
+        && exists(/databases/$(database)/documents/users/$(uid)/t_miem/$(request.auth.uid));
+    }
+    match /users/{uid}/t_miem/{emp} {
+      allow read: if request.auth != null && request.auth.uid == emp;
+    }
+    match /users/{uid}/t_sol/{emp} {
+      allow create, update, delete: if request.auth != null && request.auth.uid == emp;
+    }
+    match /licencias/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+    }
+    match /config/{doc} {
+      allow read: if request.auth != null;
+    }
+    function isAdmin() {
+      return request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    match /admins/{aid} {
+      allow read: if request.auth != null && request.auth.uid == aid;
+    }
+    match /licencias/{lid} {
+      allow read, write: if isAdmin();
+      allow create: if request.auth != null && request.auth.uid == lid
+        && request.resource.data.keys().hasOnly(['prueba','vence','email','nombre','tel','ts'])
+        && request.resource.data.prueba == true
+        && request.resource.data.vence is timestamp
+        && request.resource.data.vence <= request.time + duration.value(31, 'd');
+    }
+    match /solicitudes/{sid} {
+      allow create, update: if request.auth != null && request.auth.uid == sid;
+      allow read, delete: if isAdmin();
+    }
+    match /config/{cdoc} {
+      allow write: if isAdmin();
+    }
+  }
+}
