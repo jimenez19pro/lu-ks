@@ -144,7 +144,7 @@ Truco para el iPhone: en el editor de reglas es difícil borrar todo; es más f�
 
 ## 8. Pruebas automáticas (para Claude)
 
-En `pruebas/`: `mockfb.js` (Firebase falso: auth, firestore con batch, onSnapshot de colecciones y documentos, messaging) y scripts de Playwright (`ttienda.js`, `tt3.js` = 8 mejoras + empleados, `tlic.js` = licencias, `tadm.js` = panel admin, `tpk.js` = precios por cantidad, `tfx.js` = factura con IA (simula la respuesta de Gemini), `tld.js` = lectora y escanear inventario (simula la lectora escribiendo rápido), `tcam.js` = escáner de cámara con cámara falsa y lector simulado, `tgar.js`, `tdev.js`, `tcol.js`, etc.).
+En `pruebas/`: `mockfb.js` (Firebase falso: auth, firestore con batch, onSnapshot de colecciones y documentos, messaging) y scripts de Playwright (`ttienda.js`, `tt3.js` = 8 mejoras + empleados, `tlic.js` = licencias, `tadm.js` = panel admin, `tpk.js` = precios por cantidad, `tfx.js` = factura con IA (simula la respuesta de Gemini), `tld.js` = lectora y escanear inventario (simula la lectora escribiendo rápido), `tcam.js` = escáner de cámara con cámara falsa y lector simulado, `tcaja.js` = vender escaneando con la cámara (modo continuo), `tgar.js`, `tdev.js`, `tcol.js`, etc.).
 - Copiar `pruebas/*` a la raíz del proyecto, construir (`python3 build_pub.py`) y ejecutar `node ttienda.js`.
 - Sirven `pub/` con `python3 -m http.server`, bloquean service workers (`serviceWorkers:'block'`) y reemplazan Firebase por el mock.
 - En la tienda, las pruebas le dan licencia a la cuenta de prueba escribiendo `licencias/{uid}` con un batch.
@@ -196,3 +196,6 @@ Jose tiene iPhone 12 Pro (Lightning): se le recomendó una lectora **Bluetooth**
 
 ## 15. Escáner de cámara más rápido — 21 oct 2026
 Jose reportó que la cámara demoraba o no reconocía. Safari de iPhone no trae BarcodeDetector y se usaba ZXing-js (lento). Ahora se usa el polyfill `barcode-detector@3.0.8` (zxing-cpp en WebAssembly). Solo cambió `tienda/index.html`.
+
+## 16. Vender escaneando (modo caja continuo) — 21 oct 2026
+Caja → "📷 Vender escaneando" (aparece cuando algún producto tiene código) o el 📷 dentro de una venta: la cámara queda abierta, cada producto suma con bip y destello verde; el mismo código solo se vuelve a contar cuando sale del cuadro (6 lecturas vacías seguidas); barra con último producto, total, "↩️ Quitar el último" y "✅ Cobrar". Producto por peso o código desconocido cierran la cámara y siguen el flujo normal. Funciones `scanVenta`, `ventaMulti`, `scanCartUI`; `found(code,manual)` con `SC.multi`.
