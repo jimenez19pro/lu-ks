@@ -64,6 +64,7 @@ pubsrc/
   dict.json, i18n.js  → traducciones al inglés (MutationObserver)
   shim.js             → capa de datos Firestore (emula la API de Google Sheets que usaba gastos.html), login y cuenta
   imp.js  onb.js  siri.js  land.js  story.js  push.js  gar.js  lic.js  post.js → módulos de Lu-Ks
+  ui.js ui.css       → diseño nuevo de Lu-Ks: transiciones, números que cuentan, gestos (cerrar ventanas deslizando, deslizar movimiento para editar, deslizar para actualizar)
   sw.js manifest.json privacidad.html íconos shot*.jpg
   tienda/
     index.html        → TODA la app Lu-Ks Tienda (un solo archivo)
@@ -144,7 +145,7 @@ Truco para el iPhone: en el editor de reglas es difícil borrar todo; es más f�
 
 ## 8. Pruebas automáticas (para Claude)
 
-En `pruebas/`: `mockfb.js` (Firebase falso: auth, firestore con batch, onSnapshot de colecciones y documentos, messaging) y scripts de Playwright (`ttienda.js`, `tt3.js` = 8 mejoras + empleados, `tlic.js` = licencias, `tadm.js` = panel admin, `tpk.js` = precios por cantidad, `tfx.js` = factura con IA (simula la respuesta de Gemini), `tld.js` = lectora y escanear inventario (simula la lectora escribiendo rápido), `tcam.js` = escáner de cámara con cámara falsa y lector simulado, `tcaja.js` = vender escaneando con la cámara (modo continuo), `tgar.js`, `tdev.js`, `tcol.js`, etc.).
+En `pruebas/`: `mockfb.js` (Firebase falso: auth, firestore con batch, onSnapshot de colecciones y documentos, messaging) y scripts de Playwright (`ttienda.js`, `tt3.js` = 8 mejoras + empleados, `tlic.js` = licencias, `tadm.js` = panel admin, `tpk.js` = precios por cantidad, `tfx.js` = factura con IA (simula la respuesta de Gemini), `tld.js` = lectora y escanear inventario (simula la lectora escribiendo rápido), `tcam.js` = escáner de cámara con cámara falsa y lector simulado, `tcaja.js` = vender escaneando con la cámara (modo continuo), `tux.js` = diseño nuevo de Lu-Ks (botón +, gestos, números, inglés), `tgar.js`, `tdev.js`, `tcol.js`, etc.).
 - Copiar `pruebas/*` a la raíz del proyecto, construir (`python3 build_pub.py`) y ejecutar `node ttienda.js`.
 - Sirven `pub/` con `python3 -m http.server`, bloquean service workers (`serviceWorkers:'block'`) y reemplazan Firebase por el mock.
 - En la tienda, las pruebas le dan licencia a la cuenta de prueba escribiendo `licencias/{uid}` con un batch.
@@ -199,3 +200,12 @@ Jose reportó que la cámara demoraba o no reconocía. Safari de iPhone no trae 
 
 ## 16. Vender escaneando (modo caja continuo) — 21 oct 2026
 Caja → "📷 Vender escaneando" (aparece cuando algún producto tiene código) o el 📷 dentro de una venta: la cámara queda abierta, cada producto suma con bip y destello verde; el mismo código solo se vuelve a contar cuando sale del cuadro (6 lecturas vacías seguidas); barra con último producto, total, "↩️ Quitar el último" y "✅ Cobrar". Producto por peso o código desconocido cierran la cámara y siguen el flujo normal. Funciones `scanVenta`, `ventaMulti`, `scanCartUI`; `found(code,manual)` con `SC.multi`.
+
+## 17. Lu-Ks: diseño más fluido y profesional — 21 oct 2026
+- **Inicio:** encabezado en una línea (círculo con la inicial → Ajustes, fecha, saludo y un solo botón de menú); la sincronización es un puntico verde (amarillo si hay pendientes) y el texto "Sincronizado" ya no sale cuando todo está bien. Tarjeta principal `heroCard()` "Te quedan $X" (ingresos − gastos del período; si no hay ingresos usa el presupuesto; si no, "Gastaste"). `statCards()` ahora muestra "Saldo total" y "Gastos" o "Ahorrado". Vacíos compactos (`.slim`) para cuentas y presupuestos. Siluetas de carga `skel()`.
+- **Iconos:** las categorías usan iconos de línea en un círculo del color de la categoría (`ICP`, `ci(k,tamaño)`); si el usuario cambió el emoji o creó una categoría propia, se muestra su emoji en el mismo círculo.
+- **Colores:** los gastos ya no salen en rojo; el rojo queda para alertas (presupuesto pasado, saldos negativos).
+- **Anotar:** el botón + abre directo el formulario con el valor enfocado; dentro hay botones "IA" (Notas AI) y "Foto" (escanear recibo, si hay clave de Gemini).
+- **Nombres:** pestañas Inicio / Movimientos / Reportes / Ajustes; Reportes: Resumen / Descargar; tendencia sin historial muestra un mensaje amable.
+- **Error corregido:** los sonidos no funcionaban porque la variable `LKAC` se usaba para el audio y para los colores; el audio ahora usa `LKAU`.
+- Traducciones nuevas agregadas a `pubsrc/dict.json`.
