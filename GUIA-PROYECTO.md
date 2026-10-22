@@ -210,3 +210,10 @@ Caja → "📷 Vender escaneando" (aparece cuando algún producto tiene código)
 - **Error corregido:** los sonidos no funcionaban porque la variable `LKAC` se usaba para el audio y para los colores; el audio ahora usa `LKAU`.
 - Traducciones nuevas agregadas a `pubsrc/dict.json`.
 - **Teclado en iPhone (22 oct):** el formulario se abría con animación y el teclado salía a la vez, así que iOS lo subía de más. Ahora `#sheet` abre sin animación (`noanim`) y con el teclado abierto las ventanas se ajustan al área visible usando `visualViewport` (clase `kb`, en `ui.js`). Prueba: `tkb.js`.
+- **Pantalla de inicio (22 oct):** se veía una "interferencia" abajo durante el splash: la barra inferior con desenfoque (`backdrop-filter`) se pintaba por encima en iOS. Ahora `#splash~nav` y `#splash~#app` quedan ocultos mientras existe el splash (en `ui.css`). Prueba: `tsp.js`.
+
+## 18. Animaciones de inicio y video promocional — 22 oct 2026
+- **Lu-Ks:** nueva pantalla de bienvenida (`#splash` en `gastos.html`): ícono que aparece, gráfica que se dibuja con brillo, nombre que sube letra por letra, lema y barrita de carga; dura ~2,4 s, se salta tocando y respeta "reducir movimiento".
+- **Lu-Ks Tienda:** pantalla de bienvenida nueva (`#tsp` al inicio de `tienda/index.html`): se arma la tiendita (local, toldo por franjas, ventanas que se encienden) y sube "Lu-Ks Tienda" con el lema "Caja · Fiados · Inventario".
+- **Video promocional** (vertical 1080×1920, 22 s, sin música): fuente en `promo/promo.html` (animación CSS con las capturas de las apps) y `promo/render.js` (graba cuadro por cuadro con Playwright); luego `ffmpeg -framerate 30 -i fr/%04d.jpg -c:v libx264 -crf 20 -pix_fmt yuv420p LuKs-promo.mp4`. Las capturas (`l-home.png`, `l-mov.png`, `t-caja.png`, `t-venta.png`) se toman con `tshot.js` y `tour.js`.
+- `film.js` en pruebas: genera una tira de fotogramas de las animaciones de inicio.
