@@ -209,3 +209,4 @@ Caja → "📷 Vender escaneando" (aparece cuando algún producto tiene código)
 - **Nombres:** pestañas Inicio / Movimientos / Reportes / Ajustes; Reportes: Resumen / Descargar; tendencia sin historial muestra un mensaje amable.
 - **Error corregido:** los sonidos no funcionaban porque la variable `LKAC` se usaba para el audio y para los colores; el audio ahora usa `LKAU`.
 - Traducciones nuevas agregadas a `pubsrc/dict.json`.
+- **Teclado en iPhone (22 oct):** el formulario se abría con animación y el teclado salía a la vez, así que iOS lo subía de más. Ahora `#sheet` abre sin animación (`noanim`) y con el teclado abierto las ventanas se ajustan al área visible usando `visualViewport` (clase `kb`, en `ui.js`). Prueba: `tkb.js`.
