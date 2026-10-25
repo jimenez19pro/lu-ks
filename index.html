@@ -284,19 +284,19 @@ label{font-size:13px;padding-left:4px}
 .hero-t,.hero-s,.hero .mut,.hero .lnk{color:rgba(255,255,255,.85)!important}
 .hero-b{background:rgba(255,255,255,.25)}
 .hero .pos,.hero .neg{color:#fff!important}
-/* barra de abajo flotante de vidrio */
-nav{left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));padding:8px 6px;border-radius:32px;background:var(--glass)!important;-webkit-backdrop-filter:blur(24px) saturate(180%)!important;backdrop-filter:blur(24px) saturate(180%)!important;border:.5px solid var(--glassb);box-shadow:var(--shadow)}
-nav button.tab{font:600 11px var(--f);gap:3px;border-radius:24px;padding:5px 0}
-nav button.tab svg{width:24px;height:24px}
-nav button.tab[aria-current=page]{background:var(--sf2);font-weight:700}
-.fab{background:var(--ac);color:#fff;margin:-34px auto 0;box-shadow:0 8px 22px color-mix(in srgb,var(--ac) 45%,transparent);border:3px solid var(--bg)}
-#app{padding-bottom:140px}
+/* barra de abajo clásica de iPhone (pegada abajo) */
+nav{left:0;right:0;bottom:0;padding:8px 6px calc(6px + env(safe-area-inset-bottom,0px));border-radius:0;background:color-mix(in srgb,var(--bg) 94%,transparent)!important;-webkit-backdrop-filter:blur(24px) saturate(180%)!important;backdrop-filter:blur(24px) saturate(180%)!important;border:0;border-top:.5px solid var(--ln);box-shadow:none}
+nav button.tab{font:500 10.5px var(--f);gap:3px;padding:2px 0;color:var(--mut)}
+nav button.tab svg{width:26px;height:26px}
+nav button.tab[aria-current=page]{color:var(--ac);font-weight:600}
+.fab{background:var(--ac);color:#fff;margin:-30px auto 0;box-shadow:0 8px 22px color-mix(in srgb,var(--ac) 45%,transparent);border:4px solid var(--bg)}
+#app{padding-bottom:130px}
 /* ventanas tipo vidrio */
 .sheet{background:rgba(0,0,0,.28)}
 .sheet>div{width:calc(100% - 12px);margin:0 auto calc(6px + env(safe-area-inset-bottom,0px));border-radius:34px;background:var(--sheet);-webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);border:.5px solid var(--glassb);box-shadow:0 -6px 40px rgba(0,0,0,.18);padding-bottom:22px}
 .sheet>div .card{background:var(--sf)}
 .sheet.kb>div{width:100%;margin:0 auto;border-radius:28px 28px 0 0}
-.toast{background:var(--sheet);color:var(--ink);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);border:.5px solid var(--glassb);box-shadow:var(--shadow);border-radius:999px;padding:11px 18px;bottom:calc(100px + env(safe-area-inset-bottom,0px))}
+.toast{background:var(--sheet);color:var(--ink);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);border:.5px solid var(--glassb);box-shadow:var(--shadow);border-radius:999px;padding:11px 18px;bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 .ptr{background:var(--glass);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:.5px solid var(--glassb);border-radius:999px}
 .amtc input,.amtc input:focus{outline:none!important;font-family:var(--f)!important;font-weight:700}
 .fbox{border-width:.5px}
