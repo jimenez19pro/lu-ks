@@ -1071,8 +1071,9 @@ document.addEventListener("keydown",function(e){if(e.key==="Enter"&&e.target.id=
 /* ---------- Sonidos ---------- */
 var LKAU=null;
 function sndOn(){return ajG("sonidos")!=="no"}
-function sndCtx(){try{if(navigator.audioSession)navigator.audioSession.type="ambient"}catch(e){}if(!LKAU){var A=window.AudioContext||window.webkitAudioContext;if(!A)return null;LKAU=new A()}if(LKAU.state==="suspended")LKAU.resume();return LKAU}
-document.addEventListener("pointerdown",function(){if(sndOn())sndCtx()},{once:true});
+function sndCtx(){try{if(navigator.audioSession)navigator.audioSession.type="ambient"}catch(e){}if(!LKAU){var A=window.AudioContext||window.webkitAudioContext;if(!A)return null;LKAU=new A()}if(LKAU.state!=="running")try{LKAU.resume().catch(function(){})}catch(e){}return LKAU}
+document.addEventListener("visibilitychange",function(){if(!document.hidden&&LKAU&&LKAU.state!=="running")try{LKAU.resume().catch(function(){})}catch(e){}});
+["pointerdown","touchend","click"].forEach(function(ev){document.addEventListener(ev,function(){if(!sndOn())return;var c=sndCtx();if(c&&!sndCtx.ok){try{var b=c.createBuffer(1,1,22050),s=c.createBufferSource();s.buffer=b;s.connect(c.destination);s.start(0);sndCtx.ok=1}catch(e){}}},{passive:true,capture:true})});
 function tone(c,f,t0,d,o){o=o||{};var g=c.createGain(),os=c.createOscillator();os.type=o.type||"sine";os.frequency.setValueAtTime(f,t0);if(o.to)os.frequency.exponentialRampToValueAtTime(o.to,t0+d);g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime((o.v||.18)*1.9,t0+(o.a||.008));g.gain.exponentialRampToValueAtTime(.0001,t0+d);os.connect(g);g.connect(c.destination);os.start(t0);os.stop(t0+d+.05)}
 function noise(c,t0,d,v,hp){var n=Math.floor(c.sampleRate*d),b=c.createBuffer(1,n,c.sampleRate),x=b.getChannelData(0);for(var i=0;i<n;i++)x[i]=(Math.random()*2-1)*Math.pow(1-i/n,3);var s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();s.buffer=b;f.type="highpass";f.frequency.value=hp||3000;g.gain.value=(v||.12)*1.9;s.connect(f);f.connect(g);g.connect(c.destination);s.start(t0)}
 function snd(k){if(!sndOn()||LKRM&&k==="cel")return;var c=sndCtx();if(!c)return;var t=c.currentTime+.01;
