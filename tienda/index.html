@@ -229,6 +229,17 @@ label .in,label input,label select{letter-spacing:-.01em}
 #scan .bar .in{background:rgba(118,118,128,.24);border:0}
 #scan .frame{border-radius:24px}
 #scan .x{background:rgba(255,255,255,.18);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+
+/* barra de abajo clásica de iPhone (pegada abajo) */
+nav{left:0!important;right:0!important;bottom:0!important;max-width:none!important;margin:0!important;border-radius:0!important;border:0!important;border-top:.5px solid var(--ln)!important;box-shadow:none!important;padding:6px 4px calc(4px + env(safe-area-inset-bottom,0px))!important;background:color-mix(in srgb,var(--bg) 94%,transparent)!important;-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%)}
+nav button{background:none!important;border-radius:0!important;padding:2px 0 0!important;gap:2px!important;font-size:10.5px!important;font-weight:500!important;color:var(--mut)!important}
+nav button span{filter:none!important;opacity:1!important;font-size:0!important;line-height:0}
+nav button span svg{width:27px;height:27px;display:block}
+nav button[aria-current=true]{color:var(--ac)!important}
+nav button[aria-current=true] span svg{stroke-width:2.2}
+#toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+#snack{bottom:calc(72px + env(safe-area-inset-bottom,0px))}
+.wrap{padding-bottom:110px}
 /* entrada */
 #auth .logo{border-radius:24px}
 .gbtn{border:0;background:var(--sf)}
@@ -240,11 +251,11 @@ label .in,label input,label select{letter-spacing:-.01em}
 <div id="auth" class="hide"></div>
 <div id="app" class="hide"><div class="wrap" id="main"></div>
 <nav id="nav">
-<button data-tab="caja" aria-current="true"><span>💵</span>Caja</button>
-<button data-tab="fiados"><span>📒</span>Fiados</button>
-<button data-tab="inv"><span>📦</span>Inventario</button>
-<button data-tab="gastos"><span>🧾</span>Gastos</button>
-<button data-tab="rep" id="nav-rep"><span>📊</span>Reportes</button>
+<button data-tab="caja" aria-current="true"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/></svg></span>Caja</button>
+<button data-tab="fiados"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/><path d="M9 7.5h6M9 11h4"/></svg></span>Fiados</button>
+<button data-tab="inv"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/></svg></span>Inventario</button>
+<button data-tab="gastos"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2.8h12v18.4l-2.4-1.5-2.4 1.5-1.2-.8-1.2.8-2.4-1.5L6 21.2z"/><path d="M9 7.5h6M9 11h6M9 14.5h4"/></svg></span>Gastos</button>
+<button data-tab="rep" id="nav-rep"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V11M10 20V5M16 20v-6M21 20H3"/></svg></span>Reportes</button>
 </nav></div>
 <div id="ov"></div><div id="sh"></div><div id="toast"></div>
 <div id="snack"><span class="grow" id="snack-t"></span><button id="snack-u" style="display:none">↩️ Deshacer</button><button id="snack-b"></button></div>
