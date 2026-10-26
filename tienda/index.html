@@ -242,6 +242,22 @@ nav button[aria-current=true] span svg{stroke-width:2.2}
 #snack{bottom:calc(72px + env(safe-area-inset-bottom,0px))}
 .wrap{padding-bottom:110px}
 
+
+/* movimiento suave */
+#main.tt{animation:tTab .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes tTab{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.btn,.act,.chip,.circ,.seg button,.scanb,.kpi,.qty button,nav button{transition:transform .12s ease,background-color .15s,color .15s}
+.btn:active,.act:active,.chip:active,.circ:active,.seg button:active,.scanb:active,.qty button:active{transform:scale(.96)}
+nav button:active{transform:scale(.92)}
+.row{transition:transform .22s cubic-bezier(.2,.8,.2,1),background-color .12s}
+.row:active{background-color:var(--sf2)}
+.row.swr{box-shadow:inset -4px 0 0 var(--ac)}
+#sh{transition:transform .25s ease}
+.sk{background:linear-gradient(90deg,var(--sf) 0%,var(--sf2) 50%,var(--sf) 100%);background-size:200% 100%;animation:skM 1.2s ease-in-out infinite}
+@keyframes skM{from{background-position:100% 0}to{background-position:-100% 0}}
+.ptr{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 10px);transform:translate(-50%,-70px);background:var(--glass);color:var(--ac);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:.5px solid var(--glassb);border-radius:999px;padding:7px 15px;font-size:13px;font-weight:600;z-index:25;transition:transform .2s;box-shadow:0 6px 20px rgba(0,0,0,.15);pointer-events:none}
+.ptr.on{transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){#main.tt,.sk{animation:none!important}.row,#sh{transition:none!important}}
 /* tamaño de letra */
 html[data-fs="1"] #main,html[data-fs="1"] #sh{zoom:1.12}
 html[data-fs="2"] #main,html[data-fs="2"] #sh{zoom:1.24}
@@ -442,8 +458,29 @@ h+='<h2>Lo que más se vende · '+lbl.toLowerCase()+'</h2>'+(tl.length?'<div cla
 h+='<h2>Cuentas pendientes</h2><div class="kpis"><div class="kpi"><div class="s">Te deben (fiados)</div><div class="v neg">'+m(porCobrar())+'</div></div><div class="kpi"><div class="s">Debes a proveedores</div><div class="v neg">'+m(porPagar())+'</div></div></div>';
 var cs=D.caja.filter(function(c){return c.contado!=null&&c.tipo!=="turno"}).sort(function(x,y){return x.id<y.id?1:-1}).slice(0,10);h+=turnosRep(a,b);if(cs.length)h+='<h2>Cierres de caja</h2><div class="sg">'+cs.map(function(c){return'<div class="row"><div class="ic">🔒</div><div class="grow"><div class="t">'+fd(c.id)+(c.por?' · '+esc(c.por):'')+'</div><div class="s">Esperado '+m(c.esperado)+' · contado '+m(c.contado)+'</div></div><div style="font-size:13px;text-align:right">'+difTxt(c.contado-c.esperado)+'</div></div>'}).join("")+'</div>';
 h+='<p class="s" style="margin-top:16px">La ganancia es un estimado: usa el costo de cada producto y, en las ventas con monto rápido, el margen que pusiste en Ajustes ('+conf().margen+'%). Los pagos de mercancía no se restan otra vez porque ya están en el costo. Los gastos fijos (arriendo, empleados y servicios) se muestran aparte para que no te dañen la ganancia del día.</p>';return h}
-function draw(){var main=$("#main");if(!main||!OWN)return;var y=window.scrollY,h;var ok=COLS.every(function(k){return READY[k]});if(!ok)h=header("Cargando…")+'<div class="card empty"><b>⏳</b>Abriendo tu tienda…</div>';else h={caja:vCaja,fiados:vFiados,inv:vInv,gastos:vGastos,rep:vRep}[TAB]();var foc=document.activeElement&&document.activeElement.dataset&&document.activeElement.dataset.q,ss=foc?document.activeElement.selectionStart:0;main.innerHTML=h;$("#nav-rep").style.display=emp()?"none":"";[].forEach.call(document.querySelectorAll("#nav button"),function(b){b.setAttribute("aria-current",b.dataset.tab===TAB)});if(foc){var s=main.querySelector("[data-q]");if(s){s.focus();try{s.setSelectionRange(ss,ss)}catch(e){}}}window.scrollTo(0,draw.keep?y:0);draw.keep=false}
+function draw(){var main=$("#main");if(!main||!OWN)return;main.style.pointerEvents="";var y=window.scrollY,h;var ok=COLS.every(function(k){return READY[k]});if(!ok)h=skelHTML();else h={caja:vCaja,fiados:vFiados,inv:vInv,gastos:vGastos,rep:vRep}[TAB]();var foc=document.activeElement&&document.activeElement.dataset&&document.activeElement.dataset.q,ss=foc?document.activeElement.selectionStart:0;var tk=TAB+(ok?'1':'0'),nueva=draw.last!==tk;draw.last=tk;main.innerHTML=h;if(nueva&&ok){main.classList.remove('tt');void main.offsetWidth;main.classList.add('tt');cuenta(main)}$("#nav-rep").style.display=emp()?"none":"";[].forEach.call(document.querySelectorAll("#nav button"),function(b){b.setAttribute("aria-current",b.dataset.tab===TAB)});if(foc){var s=main.querySelector("[data-q]");if(s){s.focus();try{s.setSelectionRange(ss,ss)}catch(e){}}}window.scrollTo(0,draw.keep?y:0);draw.keep=false}
 function redraw(){draw.keep=true;draw()}
+/* ---------- números que suben contando ---------- */
+function cuenta(root){if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;[].forEach.call(root.querySelectorAll(".hero .big,.kpi .v"),function(e){var tx=e.textContent.trim(),mm=/^(-?)\$([\d.]+)$/.exec(tx);if(!mm)return;var v=+mm[2].replace(/\./g,"");if(!(v>=100))return;var sg=mm[1],t0=null,D=650;function f(t){if(!t0)t0=t;var k=Math.min((t-t0)/D,1),q=1-Math.pow(1-k,3);if(!document.body.contains(e)||e.textContent.indexOf("$")<0)return;e.textContent=sg+m(Math.round(v*q)).replace("-","");if(k<1)requestAnimationFrame(f);else e.textContent=tx}e.textContent=sg+"$0";requestAnimationFrame(f)})}
+/* ---------- gestos de iPhone ---------- */
+(function(){try{
+/* bajar la ventana con el dedo para cerrarla */
+var SD=null;
+document.addEventListener("touchstart",function(e){var t=e.target,sh=$("#sh");if(!sh||!sh.classList.contains("on")||!sh.contains(t)||e.touches.length!==1||sh.scrollTop>2||t.closest("input,textarea,select,.plist,.shots,canvas,#e-l,[id$='-l']"))return;SD={y:e.touches[0].clientY,x:e.touches[0].clientX,dy:0,on:false}},{passive:true});
+document.addEventListener("touchmove",function(e){if(!SD)return;var sh=$("#sh"),dy=e.touches[0].clientY-SD.y,dx=e.touches[0].clientX-SD.x;if(!SD.on){if(dy<-6||Math.abs(dx)>Math.abs(dy)+4){SD=null;return}if(dy<8)return;SD.on=true;sh.style.transition="none"}SD.dy=Math.max(0,dy-8);sh.style.transform="translateY("+SD.dy+"px)"},{passive:true});
+document.addEventListener("touchend",function(){var s=SD;SD=null;if(!s||!s.on)return;var sh=$("#sh");sh.style.transition="";if(s.dy>110){sh.style.transform="translateY(110%)";setTimeout(function(){sh.style.transform="";close();if(typeof draw==="function"&&!SH)draw.keep=true},180)}else sh.style.transform=""},{passive:true});
+/* deslizar una fila a la izquierda para abrirla (editar) */
+var SW=null;
+document.addEventListener("touchstart",function(e){var r=e.target.closest&&e.target.closest("#main .row[data-a][data-id]");if(!r||e.touches.length!==1)return;SW={r:r,x:e.touches[0].clientX,y:e.touches[0].clientY,dx:0,on:false}},{passive:true});
+document.addEventListener("touchmove",function(e){if(!SW)return;var dx=e.touches[0].clientX-SW.x,dy=e.touches[0].clientY-SW.y;if(!SW.on){if(Math.abs(dy)>8&&Math.abs(dy)>Math.abs(dx)){SW=null;return}if(!(dx<-12&&Math.abs(dx)>Math.abs(dy)*1.3))return;SW.on=true;SW.r.classList.add("swr")}SW.dx=Math.min(0,Math.max(dx+12,-96));SW.r.style.transition="none";SW.r.style.transform="translateX("+SW.dx+"px)"},{passive:true});
+document.addEventListener("touchend",function(){var s=SW;SW=null;if(!s||!s.on)return;s.r.style.transition="";s.r.style.transform="";setTimeout(function(){s.r.classList.remove("swr")},230);if(s.dx<-64)setTimeout(function(){s.r.click()},120)},{passive:true});
+/* jalar hacia abajo arriba de todo para actualizar */
+var PT=null,pe=null;function pel(){if(!pe){pe=document.createElement("div");pe.className="ptr";document.body.appendChild(pe)}return pe}
+document.addEventListener("touchstart",function(e){var t=e.target;if(window.scrollY>0||e.touches.length!==1||!t.closest||!t.closest("#main")||$("#sh").classList.contains("on")||SC.on)return;PT={y:e.touches[0].clientY,dy:0}},{passive:true});
+document.addEventListener("touchmove",function(e){if(!PT)return;PT.dy=e.touches[0].clientY-PT.y;if(window.scrollY>0||PT.dy<0){PT=null;if(pe)pe.classList.remove("on");return}if(PT.dy>30){var x=pel();x.textContent=PT.dy>90?"↻ Suelta para actualizar":"↓ Desliza para actualizar";x.classList.add("on")}},{passive:true});
+document.addEventListener("touchend",function(){var p=PT;PT=null;if(!p||!pe)return;if(p.dy>90){pe.textContent="Actualizando…";draw.last="";draw();setTimeout(function(){pe.textContent="✓ Al día";setTimeout(function(){pe.classList.remove("on")},700)},600)}else pe.classList.remove("on")},{passive:true});
+}catch(e){console.error(e)}})();
+
 
 /* ---------- escáner ---------- */
 var SC={on:false,cb:null,stream:null,det:null,zx:null,raf:0,last:""};
@@ -887,7 +924,9 @@ function screen(h){$("#app").classList.add("hide");$("#auth").classList.remove("
 function joinUI(){var u=auth.currentUser,dn=(u&&u.displayName)||"";screen('<h1 style="text-align:center">Unirte a '+esc(INV.t||"la tienda")+'</h1><p class="mut" style="text-align:center">El dueño tiene que aprobarte. ¿Cómo te llamas?</p><label>Tu nombre<input class="in" id="j-n" value="'+esc(dn)+'" placeholder="Ej. Juan"></label><div id="j-m" class="neg" style="min-height:18px;margin-top:8px;font-size:14px"></div><button class="btn" id="j-go">Enviar solicitud</button><button class="btn ghost" id="j-no">No, usar mi propia tienda</button>')}
 function pendUI(){screen('<h1 style="text-align:center">⏳ Esperando aprobación</h1><p class="mut" style="text-align:center;line-height:1.5">Le enviamos tu solicitud al dueño de <b>'+esc(LINK&&LINK.t||"la tienda")+'</b>.<br>Dile que abra Lu-Ks Tienda → ⚙️ Ajustes → Equipo y te apruebe. Esta pantalla cambia sola.</p><button class="btn ghost" id="j-cancel">Cancelar solicitud</button><button class="btn ghost" id="j-out">Cerrar sesión</button>')}
 function sinAcceso(){if(!emp())return;unsubAll(UNS);screen('<h1 style="text-align:center">🚫 Ya no tienes acceso</h1><p class="mut" style="text-align:center">El dueño de '+esc(LINK&&LINK.t||"la tienda")+' quitó tu acceso.</p><button class="btn" id="j-cancel">Volver a mi tienda</button><button class="btn ghost" id="j-out">Cerrar sesión</button>')}
-function showApp(){$("#auth").classList.add("hide");$("#app").classList.remove("hide")}
+function skelHTML(){return header(saludo(),"Abriendo tu tienda…")+'<div class="sk" style="height:132px;border-radius:28px;margin-top:14px"></div><div class="acts">'+'<div class="sk" style="height:76px;border-radius:22px"></div>'.repeat(4)+'</div><div class="sk" style="height:52px;border-radius:999px;margin-top:12px"></div><div class="kpis">'+'<div class="sk" style="height:74px;border-radius:24px"></div>'.repeat(4)+'</div><div class="sk" style="height:20px;width:46%;border-radius:8px;margin-top:26px"></div><div class="sk" style="height:180px;border-radius:24px;margin-top:12px"></div>'}
+function showApp(){$("#auth").classList.add("hide");$("#app").classList.remove("hide");try{localStorage.setItem("lkt-sk","1")}catch(e){}}
+try{if(localStorage.getItem("lkt-sk")){$("#main").innerHTML=skelHTML();$("#main").style.pointerEvents="none";$("#auth").classList.add("hide");$("#app").classList.remove("hide")}}catch(e){}
 var LIC=null,CFG={},ADM=false,AD={lic:[],sol:[],on:false},AUN=[];
 function toD(v){if(!v)return null;if(v.toDate)return v.toDate();if(typeof v==="number")return new Date(v);if(v.seconds)return new Date(v.seconds*1000);if(typeof v==="string"){var p=v.split("-");if(p.length===3)return new Date(+p[0],+p[1]-1,+p[2],23,59,59)}return null}
 function venceL(d){if(!d)return null;if(d.hasta)return toD(String(d.hasta));if(d.vence)return toD(d.vence);return null}
@@ -941,7 +980,7 @@ if(t.closest("#pay-try")){probar();return}
 if(t.closest("#pay-wa")){var u=auth.currentUser,ven=!!LIC&&!vigente(LIC),tl=String(num(val("pay-tel"))||"");solicitar(ven&&!esPrueba(LIC)?"renovar":"activar");wa(CFG.wa||"3137904093",(ven&&!esPrueba(LIC)?"Hola 👋, quiero renovar mi plan de Lu-Ks Tienda.":"Hola 👋, quiero activar Lu-Ks Tienda.")+"\nMi correo: "+(u&&u.email||"")+(tl?"\nMi celular: "+tl:"")+"\nMi código: "+UID);return}
 if(t.closest("#pay-copy")){(navigator.clipboard?navigator.clipboard.writeText(UID):Promise.reject()).then(function(){toast("📋 Código copiado")}).catch(function(){prompt("Copia tu código:",UID)});return}});
 try{auth.getRedirectResult().catch(function(){})}catch(e){}
-auth.onAuthStateChanged(function(u){unsubAll(UNS);unsubAll(UNX);unsubAll(AUN);ADM=false;LIC=null;COLS.forEach(function(k){D[k]=[]});D.sol=[];D.miem=[];READY={};if(LUN){try{LUN()}catch(e){}LUN=null}OWN=null;LINK=null;ROLE="dueno";if(u){arrancar(u)}else{UID=null;$("#app").classList.add("hide");$("#auth").classList.remove("hide");authUI()}});
+auth.onAuthStateChanged(function(u){unsubAll(UNS);unsubAll(UNX);unsubAll(AUN);ADM=false;LIC=null;COLS.forEach(function(k){D[k]=[]});D.sol=[];D.miem=[];READY={};if(LUN){try{LUN()}catch(e){}LUN=null}OWN=null;LINK=null;ROLE="dueno";if(u){arrancar(u)}else{UID=null;try{localStorage.removeItem("lkt-sk")}catch(e){}$("#app").classList.add("hide");$("#auth").classList.remove("hide");authUI()}});
 if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});
 window.LKT={D:D,resumen:resumen,esperado:esperado,state:function(){return{UID:UID,OWN:OWN,ROLE:ROLE,ME:ME,LINK:LINK,LIC:LIC}},found:found};
 })();
