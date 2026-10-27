@@ -269,8 +269,12 @@ nav button{flex:none!important;flex-direction:row!important;justify-content:flex
 nav button span svg{width:22px!important;height:22px!important}
 nav button[aria-current=true]{background:color-mix(in srgb,var(--ac) 13%,transparent)!important;color:var(--ac)!important}
 nav button:hover{background:var(--sf2)!important}
-.kbh{display:block;margin-top:auto;padding:12px;font-size:12px;line-height:1.7;color:var(--mut)}
-.kbh b{display:inline-block;min-width:26px;text-align:center;border:1px solid var(--ln);border-radius:6px;padding:0 5px;margin-right:6px;font-weight:600;color:var(--ink);background:var(--bg)}
+.kbh{display:block;margin-top:auto;padding:8px 4px;font-size:13px;color:var(--mut)}
+.kbh .kbt{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;padding:0 8px 6px}
+.kbh button{display:flex;align-items:center;gap:8px;width:100%;border:0;background:none;color:var(--ink);font:500 13px var(--f);padding:6px 8px;border-radius:10px;cursor:pointer;text-align:left}.kbh button:hover{background:var(--sf2)}
+.kbh button i{margin-left:auto;font-style:normal;font-size:11px;color:var(--mut)}
+.kbh b{display:inline-block;min-width:24px;text-align:center;border:1px solid var(--ln);border-radius:6px;padding:0 5px;font-weight:600;color:var(--ink);background:var(--bg)}
+.kbh .kbn{padding:8px 8px 0;font-size:11px;line-height:1.8}
 .wrap{max-width:1040px;padding:28px 36px 60px}
 .top h1{font-size:34px}
 .kpis{grid-template-columns:repeat(4,1fr)}
@@ -328,7 +332,7 @@ html[data-fs="2"] #main,html[data-fs="2"] #sh{zoom:1.24}
 <button data-tab="inv"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/></svg></span>Inventario</button>
 <button data-tab="gastos"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2.8h12v18.4l-2.4-1.5-2.4 1.5-1.2-.8-1.2.8-2.4-1.5L6 21.2z"/><path d="M9 7.5h6M9 11h6M9 14.5h4"/></svg></span>Gastos</button>
 <button data-tab="rep" id="nav-rep"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V11M10 20V5M16 20v-6M21 20H3"/></svg></span>Reportes</button>
-<div class="kbh"><b>F2</b>Nueva venta<br><b>F3</b>Fiar<br><b>F8</b>Gasto<br><b>F4</b>Cobrar<br><b>F6</b>Consultar precio<br><b>Esc</b>Cerrar ventana<br><b>/</b>Buscar · <b>1-5</b>Pestañas</div>
+<div class="kbh"><div class="kbt">Atajos de teclado</div><button data-kb="venta"><b>V</b>Nueva venta<i>F2</i></button><button data-kb="fiar"><b>F</b>Fiar<i>F3</i></button><button data-kb="gasto"><b>G</b>Gasto<i>F8</i></button><button data-kb="precio"><b>P</b>Consultar precio<i>F6</i></button><button data-kb="buscar"><b>/</b>Buscar</button><div class="kbn">En una venta: <b>F4</b> cobrar · <b>Esc</b> cerrar<br><b>1</b>–<b>5</b> cambiar de pestaña</div></div>
 </nav></div>
 <div id="ov"></div><div id="sh"></div><div id="toast"></div>
 <div id="snack"><span class="grow" id="snack-t"></span><button id="snack-u" style="display:none">↩️ Deshacer</button><button id="snack-b"></button></div>
@@ -774,6 +778,11 @@ function liFix(n){if(!n)return;if(n.nodeType===3){liNode(n);return}if(n.nodeType
 try{new MutationObserver(function(ms){ms.forEach(function(m){[].forEach.call(m.addedNodes,liFix)})}).observe(document.body,{childList:true,subtree:true});liFix(document.body)}catch(e){}
 
 /* ---------- atajos de teclado (computador) ---------- */
+function kbDo(a){if(a==="venta"){venta();setTimeout(function(){var q=$("#v-q")||$("#v-rap");if(q)q.focus()},80)}else if(a==="fiar"){if(can("fiar"))fiar();else noPerm()}else if(a==="gasto"){if(can("gasto"))gasto();else noPerm()}else if(a==="precio")precio();else if(a==="buscar"){var s2=document.querySelector("#main [data-q]");if(!s2){TAB="inv";draw();s2=document.querySelector("#main [data-q]")}if(s2)s2.focus()}}
+var KBL=null;
+document.addEventListener("keydown",function(e){if(!OWN||SC.on||e.ctrlKey||e.metaKey||e.altKey)return;var t=e.target;if(t&&/INPUT|TEXTAREA|SELECT/.test(t.tagName))return;var on=$("#sh")&&$("#sh").classList.contains("on");var a={v:"venta",f:"fiar",g:"gasto",p:"precio"}[String(e.key).toLowerCase()];clearTimeout(KBL);if(!a||on)return;KBL=setTimeout(function(){if(Date.now()-KB.t<200&&KB.n>1)return;kbDo(a)},140)});
+document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("[data-kb]");if(b){e.preventDefault();kbDo(b.dataset.kb)}});
+
 document.addEventListener("keydown",function(e){if(!OWN||SC.on||e.ctrlKey||e.metaKey||e.altKey)return;var k=e.key,sh=$("#sh"),on=sh&&sh.classList.contains("on"),t=e.target,typing=t&&/INPUT|TEXTAREA|SELECT/.test(t.tagName);
 if(k==="Escape"&&on){e.preventDefault();close();if(!SH)draw.keep=true;return}
 if(k==="F2"){e.preventDefault();venta();setTimeout(function(){var q=$("#v-q")||$("#v-rap");if(q)q.focus()},80);return}
@@ -781,7 +790,7 @@ if(k==="F3"){e.preventDefault();if(can("fiar"))fiar();else noPerm();return}
 if(k==="F4"&&on&&$("#v-msg")){e.preventDefault();guardarVenta();return}
 if(k==="F8"){e.preventDefault();if(can("gasto"))gasto();else noPerm();return}if(k==="F6"){e.preventDefault();precio();return}
 if(!typing&&!on&&/^[1-5]$/.test(k)){var tb=["caja","fiados","inv","gastos","rep"][+k-1];var bt=document.querySelector('#nav [data-tab="'+tb+'"]');if(bt&&bt.offsetParent!==null){e.preventDefault();bt.click()}return}
-if(!typing&&k==="/"){var s2=on?$("#sh input[type=search],#sh .search,#v-q"):document.querySelector("#main [data-q]");if(s2){e.preventDefault();s2.focus()}}});
+if(!typing&&k==="/"){e.preventDefault();if(on){var s3=$("#sh input[type=search],#sh .search,#v-q");if(s3)s3.focus()}else kbDo("buscar")}});
 /* ---------- teclado: siguiente campo y que no tape ---------- */
 function kbCampos(){var sh=$("#sh");if(!sh||!sh.classList.contains("on"))return[];return[].filter.call(sh.querySelectorAll("input,select,textarea"),function(x){return x.type!=="hidden"&&x.type!=="file"&&!x.disabled&&x.offsetParent!==null&&x.getBoundingClientRect().height>0})}
 var KBX={"scan-in":1,"w-q":1,"w-v":1,"v-q":1};
