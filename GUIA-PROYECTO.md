@@ -321,3 +321,41 @@ Caja → "📷 Vender escaneando" (aparece cuando algún producto tiene código)
 4. **Carga elegante en la Tienda:** `skelHTML()` (tarjetas grises animadas `.sk`). Si en ese celular ya se había entrado antes (`lkt-sk`), se muestra de una vez al abrir mientras confirma la cuenta y carga los datos (sin toques hasta que cargue); se borra al cerrar sesión.
 5. **Revisión completa de la Tienda:** `ttflow.js` (día completo con números conocidos: ventas en efectivo/transferencia/fiado/por libra/monto rápido, abono, gastos de la caja y aparte, compra a crédito y pago, cuadre 35.000, cierre, reportes, recarga — 22 controles bien); `ttcrawl.js` (163 toques en las 6 vistas y sus ventanas, 0 errores); `tgest.js` (gestos, animaciones y esqueleto); `trev.js` (claro/oscuro).
 6. **Página de presentación de Lu-Ks:** es la que ve quien abre `jimenez19pro.github.io/lu-ks/` sin sesión (`pubsrc/land.js`, `LKLAND`). Capturas nuevas en azul (ES e inglés, `tshotland.js` → `work/landshots/`), sección "Mírala en 25 segundos" con el video (`lu-ks-video.mp4` + `lu-ks-poster.jpg` en la raíz), letra del sistema e íconos de línea. Etiquetas Open Graph en `build_pub.py` (imagen `og-luks.jpg`, plantilla `work/og/og-luks.html`) para que el enlace salga con imagen en WhatsApp. `sw.js` de Lu-Ks ya no intercepta videos.
+
+## Pendiente: dominio propio (pospuesto por Jose, 25 oct 2026)
+- Le interesa, pero lo deja para cuando tenga el dinero. Precios aproximados: .com 45.000–60.000 COP/año; .co 120.000–150.000 COP/año.
+- Pasos cuando lo retome: comprar (Namecheap / Porkbun / Cloudflare) → DNS: registros A a 185.199.108.153, .109.153, .110.153, .111.153 y CNAME `www` → `jimenez19pro.github.io` → GitHub **Settings → Pages → Custom domain** + **Enforce HTTPS** (y verificar el dominio en la cuenta) → **Firebase → Authentication → Authorized domains**: agregar el dominio (si no, falla "Continuar con Google") → actualizar URLs absolutas (`og:url`/`og:image` en `build_pub.py`, `landing/conoce.src.html`). Los usuarios deben volver a iniciar sesión y reinstalar el ícono; los datos están en la nube.
+
+## 32. Tienda en computador — 25 oct 2026
+- Solo la Tienda (Jose eligió no hacerlo en Lu-Ks). Se activa sola con pantallas de 960 px o más (`@media (min-width:960px)`); en el celular nada cambia.
+- Barra lateral izquierda (232 px) con "Lu-Ks Tienda", pestañas y ayuda de atajos (`.kbh`). Contenido más ancho (1040 px), 4 tarjetas por fila. Ventanas como diálogos centrados. La venta (`#sh.wide`) muestra productos a la izquierda (en 2 columnas) y carrito/pago a la derecha (`.vgrid`, `.vcol`, `.vcart`).
+- Atajos: F2 nueva venta, F3 fiar, F4 cobrar (guardar venta), F8 gasto, Esc cerrar ventana, / buscar, 1–5 cambiar de pestaña (solo fuera de campos de texto). La lectora USB/Bluetooth ya funcionaba (teclado rápido + Enter). Prueba: `tpc.js`.
+- Para instalarla en el PC: abrir el enlace en Chrome o Edge → ícono de instalar en la barra de direcciones (o menú ⋮ → Instalar Lu-Ks Tienda).
+
+## 33. Tienda en computador: 5 funciones más — 26 oct 2026
+1. **Imprimir recibo** (`imprimirVenta`): botón "🖨️ Imprimir" en el detalle de la venta y, en computador, el botón del aviso después de vender. Tirilla de 80 mm por iframe + `print()`; sirve con impresora normal o de recibos instalada en el PC.
+2. **Inventario en tabla** (`invTabla`, solo pantallas ≥ 960 px): columnas ordenables (Producto, Precio, Costo, Ganancia, Existencias) tocando el título (`INVS`), clic en una fila la abre. **Descargar Excel** (`invExport`, .xlsx con SheetJS `xlsx@0.18.5` cargado desde jsDelivr solo cuando se usa).
+3. **Cargar desde Excel** (`invImport`, `ixLeer`, `ixOk`, `invPlantilla`): .xlsx/.xls/.csv; reconoce columnas Nombre, Precio, Costo, Existencias/Cantidad, Mínimo, Código por su título; no repite productos (mismo nombre o código); salta filas sin precio; entiende "2.600". Muestra vista previa antes de agregar.
+4. **Pantalla para el cliente** (`cdOpen`, `cdUpdate`, solo en computador): ventana aparte (llevarla al segundo monitor) que muestra lo que va comprando y el total; al cobrar dice "¡Gracias por su compra!". Debe permitir ventanas emergentes.
+5. **Consultar precio** (`precio`, F6 o botón en Inventario): escanear (cámara o lectora) o escribir nombre/código; precio en grande, existencias, precios por cantidad y botón "Venderlo".
+- Prueba: `tpc2.js` con `xlsx-mock.js` (en este entorno no se puede descargar SheetJS; la librería real se carga en el navegador del usuario).
+
+## Decisión de Jose (26 oct 2026)
+- **Lu-Ks queda como está:** no proponer más mejoras para Lu-Ks; solo arreglos si algo falla. Las ideas nuevas van para Lu-Ks Tienda.
+
+## 34. Permisos por empleado — 26 oct 2026
+- Dueño: Ajustes → toca un empleado → interruptores: Fiar, Recibir abonos, Gastos y proveedores, Ver el inventario, Cerrar la caja. Vender siempre está permitido; por defecto todo activo.
+- Se guarda en `t_miem/{empleado}.perm`; le llega al instante (`modoEmp` → `PERM`). `can(k)`, clases `body.np-*`, verificación en clics (`GK`), pestañas, F3/F8 y fiado en `guardarVenta`. Prueba: `tperm.js`. Control de la app (reglas de Firebase sin cambios).
+
+## 35. Atajos de teclado más fáciles — 27 oct 2026
+- Jose: en su computador los atajos "no hacían nada". Causa probable: en muchos portátiles F2/F3/F8 son teclas de brillo/volumen y necesitan Fn. Ahora hay atajos con letras (V venta, F fiar, G gasto, P precio, / buscar; solo cuando no se está escribiendo; se esperan 140 ms para no confundirlos con la lectora) y la lista de la barra lateral es tocable (`.kbh [data-kb]`, `kbDo`). F2–F8 siguen funcionando. Prueba: `tpc3.js`.
+
+## 36. App nativa de Lu-Ks con Expo — etapa 1 (27 oct 2026)
+- Jose pidió convertir las apps en apps nativas con Expo, **empezando por Lu-Ks** (la Tienda después).
+- Plan: **Etapa 1** app que abre la web de Lu-Ks por dentro (con ajustes nativos) → **Etapa 2** pasar pantallas a nativo, Google y notificaciones nativas → **Etapa 3** publicar (App Store US$99/año, Google Play US$25).
+- Repositorio nuevo **`jimenez19pro/lu-ks-app`** (no toca las apps publicadas). Expo SDK 58, React Native 0.88. Archivos en la raíz: `App.js`, `index.js`, `app.json` (Lu-Ks, `com.jimenez19pro.luks`, esquema `luks://`), `eas.json`, `package.json`, `package-lock.json`, `icon.png`, `icono-fondo.png`, `README.md`.
+- `App.js`: WebView a `https://jimenez19pro.github.io/lu-ks/`. Código inyectado (`BRIDGE`): `window.LUKS_APP`; el botón `[data-au="google"]` no abre la ventana de Google (no funciona en apps) y muestra un aviso con la opción "¿Olvidaste tu contraseña?" para crear contraseña; las descargas `a[download]` con `blob:`/`data:` (respaldo JSON, fotos de garantías) se mandan a la app, que las guarda (expo-file-system) y abre Compartir (expo-sharing); `window.__lkBack` cierra la última `.sheet.on` (botón Atrás de Android). Navegación: solo `jimenez19pro.github.io` y los dominios de Firebase quedan adentro; WhatsApp, correo y otras páginas se abren afuera. Pantalla "Sin conexión" con Reintentar. Agente de usuario `LuKsApp/1.0.0`.
+- Limitaciones de la etapa 1: sin "Continuar con Google", sin notificaciones push (el service worker no corre dentro de la app), sin modo sin conexión.
+- Desde el entorno de Claude no hay acceso a los servidores de Expo (expo.dev); npm sí. Para instalar con Expo: `EXPO_OFFLINE=1 npx expo install <paquete>`. Para revisar que compila: `EXPO_OFFLINE=1 CI=1 npx expo export --platform ios --platform android`.
+- Prueba del puente con la web real (Firebase falso): `pruebas/tbridge.js` (15 controles).
+- Cómo se prueba en el iPhone sin computador: cuenta gratis en expo.dev → proyecto conectado al repo de GitHub → cada subida publica una actualización (EAS Workflows) → se abre en la app **Expo Go**.
