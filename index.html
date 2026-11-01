@@ -1373,6 +1373,178 @@ try{var _c=LKPUB.cuentaHtml;LKPUB.cuentaHtml=function(){return'<h2>'+L("Garantí
 window.LKGAR={open:list,wipe:wipe,all:function(){return G}};
 })();
 
+/* ===== Lu-Ks: Apple Pay y SMS del banco automáticos (Atajos de iOS) =====
+   Cómo funciona:
+   - Cada usuario tiene una "llave" secreta (Ajustes: atajo) y un buzón en Firestore: buzon/{llave}.
+   - El Atajo de iOS (automatización "Transacción" de Wallet o "Mensaje") hace un POST a la API REST de
+     Firestore creando un documento en buzon/{llave}/items cuyo NOMBRE es el dato:
+        ap~MONTO~COMERCIO~TARJETA~FECHA        (Apple Pay)
+        sms~TEXTO DEL MENSAJE~FECHA            (SMS del banco)
+     No necesita iniciar sesión: las reglas de Firebase solo dejan CREAR (no leer) si el buzón existe.
+   - Cuando Lu-Ks está abierta (app o web), lee el buzón, aplica las reglas de cuentas, guarda el
+     movimiento con qSend (misma lógica de la web, con cola sin conexión) y borra el dato del buzón. */
+(function(){
+var FB=window.LUKS_FB||{},PROY=FB.projectId||"lu-ks-ia",APIK=FB.apiKey||"";
+// Enlaces de iCloud de los atajos ya hechos (cuando Jose los comparta). Vacío = instrucciones paso a paso.
+var LINKS={ap:"",sms:""};
+var un=null,unK="",PEND={},HECHO={},K="ap";
+function uid(){try{var u=firebase.auth().currentUser;return u&&u.uid}catch(e){return null}}
+function N(s){return String(s==null?"":s).normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase()}
+function E(s){return typeof esc==="function"?esc(s):String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function T(es,en){return typeof L==="function"?L(es,en):es}
+function plata(n){return"$"+Math.round(+n||0).toLocaleString("es-CO")}
+
+/* ---------- Ajustes guardados ---------- */
+function cfg(){var c={};try{c=JSON.parse(ajG("autoCfg")||"{}")||{}}catch(e){c={}}["ap","sms"].forEach(function(k){var x=c[k]=c[k]||{};x.def=x.def||"";x.reglas=x.reglas||[];x.vistas=x.vistas||[];x.ult=x.ult||null;x.n=x.n||0});return c}
+function guardar(c){try{return ajSave("autoCfg",JSON.stringify(c))}catch(e){return false}}
+function llave(){try{return String(ajG("atajo")||"")}catch(e){return""}}
+function nuevaLlave(){var a="abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789",s="",r=new Uint32Array(28);crypto.getRandomValues(r);for(var i=0;i<28;i++)s+=a[r[i]%a.length];return s}
+function asegurar(){var k=llave();if(k)return Promise.resolve(k);var u=uid();if(!u||typeof AJOK==="undefined"||!AJOK)return Promise.reject(new Error("carga"));k=nuevaLlave();var db=firebase.firestore(),b=db.batch();b.set(db.collection("buzon").doc(k),{uid:u,t:Date.now()});return b.commit().then(function(){if(!ajSave("atajo",k))throw new Error("aj");escuchar();return k})}
+function enlace(k){return"https://firestore.googleapis.com/v1/projects/"+PROY+"/databases/(default)/documents/buzon/"+k+"/items?key="+APIK+"&documentId="}
+
+/* ---------- Leer montos, fechas y SMS ---------- */
+function aNum(t){t=String(t||"").replace(/\s/g,"");var m=/^(\d{1,3}(?:[.,]\d{3})+|\d+)(?:[.,](\d{1,2}))?$/.exec(t);if(!m)return 0;var n=parseInt(m[1].replace(/[.,]/g,""),10);if(m[2])n+=parseInt(m[2],10)/Math.pow(10,m[2].length);return Math.round(n)}
+function montoEn(t){t=String(t||"");var m=/(?:\$|cop|col\$?|pesos)\s*([\d][\d.,]*\d|\d)/i.exec(t);if(m)return aNum(m[1]);m=/\b\d{1,3}(?:[.,]\d{3})+(?:[.,]\d{1,2})?\b/.exec(t);if(m)return aNum(m[0]);var s=t.replace(/[^\d.,]/g,"");return s?aNum(s):0}
+function dos(n){return("0"+n).slice(-2)}
+function ahora(){var d=new Date();return d.getFullYear()+"-"+dos(d.getMonth()+1)+"-"+dos(d.getDate())+" "+dos(d.getHours())+":"+dos(d.getMinutes())}
+function fechaDe(s){s=String(s||"");var m=/(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/.exec(s);if(m)return m[1]+"-"+m[2]+"-"+m[3]+" "+m[4]+":"+m[5];m=/(\d{4})-(\d{2})-(\d{2})/.exec(s);if(m)return m[0]+" "+ahora().slice(11);return ahora()}
+function titulo(s){s=String(s||"").replace(/\s+/g," ").trim();if(s&&s===s.toUpperCase()&&/[A-ZÁÉÍÓÚÑ]{3}/.test(s))s=s.toLowerCase().replace(/(^|[\s.\-])([a-záéíóúñ])/g,function(x,a,b){return a+b.toUpperCase()});return s.slice(0,40)}
+var BANCOS=[["bancolombia","Bancolombia"],["davivienda","Davivienda"],["daviplata","Daviplata"],["nequi","Nequi"],["bbva","BBVA"],["bogota","Banco de Bogotá"],["occidente","Banco de Occidente"],["popular","Banco Popular"],["av villas","AV Villas"],["colpatria","Scotiabank Colpatria"],["itau","Itaú"],["falabella","Banco Falabella"],["nu ","Nu"],["lulo","Lulo Bank"],["rappi","RappiPay"],["caja social","Banco Caja Social"],["agrario","Banco Agrario"]];
+function bancoDe(n){for(var i=0;i<BANCOS.length;i++)if(n.indexOf(BANCOS[i][0])>=0)return BANCOS[i][1];return""}
+function finales(t){var o=[],re=/(?:\*|x{2,}|terminad[ao]\s+en|finalizad[ao]\s+en|final\s+|cta\.?\s*|cuenta\s+|tarjeta\s+|t\.?\s?(?:cred|deb)\w*\.?\s*)\*?\s*(\d{4})\b/gi,m;while((m=re.exec(t)))if(o.indexOf(m[1])<0)o.push(m[1]);return o}
+function parseSms(txt){
+  var t=String(txt||"").replace(/\s+/g," ").trim(),n=N(t);
+  if(!t)return null;
+  if(/(codigo|clave|otp|token|contrasena)/.test(n)&&!/(compra|pago|pagaste|retiro|transferencia|recibiste|abono)/.test(n))return{skip:"codigo"};
+  var a=montoEn(t);if(!a)return{skip:"monto"};
+  var ing=/(recibiste|te (enviaron|consignaron|transfirieron|abonaron)|abono|consignacion|deposito|transferencia recibida|reintegro|devolucion|reembolso|pago recibido|te llego|nomina)/.test(n);
+  var mer="",m;
+  if(ing){m=/(?:\bde|\bdesde)\s+([A-Za-zÁÉÍÓÚÑáéíóúñ0-9&'\s]{3,40}?)(?=\s+(?:el|a las|por|en|con|fecha|hora|\d)|[.,;:]|$)/i.exec(t);if(m&&!/^(su|tu|la|el)\s/i.test(m[1])&&!/(cuenta|cta|tarjeta|\$)/i.test(m[1]))mer=m[1]}
+  else{
+    m=/\b(?:enviaste|transferiste|enviado|transferencia)\b[^;\n]{0,30}?\ba\s+([A-Za-zÁÉÍÓÚÑáéíóúñ0-9&'\s]{3,40}?)(?=\s+(?:el|a las|por|en|con|desde|fecha|hora|\d)|[.,;:]|$)/i.exec(t);
+    if(m&&!/(cuenta|cta|tarjeta|la |su |tu )/i.test(m[1]))mer=m[1];
+    if(!mer){m=/\ben\s+([^.,;:]{2,45}?)(?=\s+(?:el\s|con\s|desde|por\s|a las|fecha|hora|t\.?\s?(?:cred|deb)|tarj|\d{1,2}[-:]\d{2})|[.,;:]|\s\*|$)/i.exec(t);if(m&&!/^(su|tu|la|el|linea|línea|nuestra|nuestro|www)\b/i.test(m[1].trim())&&!/\$/.test(m[1]))mer=m[1]}
+  }
+  var bk=bancoDe(n+" ");
+  mer=titulo(mer)||(ing?T("Ingreso","Income"):/(transf|enviaste)/.test(n)?T("Transferencia","Transfer"):T("Compra","Purchase"))+(bk?" "+bk:"");
+  return{tipo:ing?"ingreso":"gasto",monto:a,comercio:mer,finales:finales(t),banco:bk,texto:t};
+}
+function parseAp(p){return{tipo:"gasto",monto:montoEn(p[1]||""),comercio:titulo(p[2]||"")||"Apple Pay",tarjeta:String(p[3]||"").trim(),fecha:fechaDe(p[4])}}
+
+/* ---------- Reglas: ¿a qué cuenta va? ---------- */
+function cuentas(){try{return(typeof ACC!=="undefined"?ACC:[]).map(function(a){return a.n})}catch(e){return[]}}
+function principal(){try{var p=ACC.filter(function(a){return a.pri})[0];return p?p.n:""}catch(e){return""}}
+function cuentaPara(k,d,c){
+  var x=c[k],mejor=null,ml=-1,txt=N(k==="ap"?d.tarjeta:d.texto);
+  x.reglas.forEach(function(r){var kk=String(r.k||"").trim();if(!kk||!r.acc)return;var ok,l;
+    if(k==="sms"&&/^\d{4}$/.test(kk)){ok=d.finales.indexOf(kk)>=0||txt.indexOf("*"+kk)>=0;l=100}
+    else{var w=N(kk);ok=w&&txt.indexOf(w)>=0;l=w.length}
+    if(ok&&l>ml){ml=l;mejor=r.acc}});
+  var ex=cuentas();
+  if(mejor&&ex.indexOf(mejor)>=0)return mejor;
+  if(x.def&&ex.indexOf(x.def)>=0)return x.def;
+  return principal();
+}
+
+/* ---------- Procesar lo que llega al buzón ---------- */
+function partir(id){var s=String(id);try{s=decodeURIComponent(s)}catch(e){}return s.split("~")}
+function procesar(id,ref){
+  var p=partir(id),k=N(p[0]).trim(),c=cfg(),d=null,src="";
+  if(k==="ap"){d=parseAp(p);src="applepay";var tj=d.tarjeta;if(tj&&c.ap.vistas.indexOf(tj)<0){c.ap.vistas.unshift(tj);c.ap.vistas=c.ap.vistas.slice(0,12)}}
+  else if(k==="sms"){d=parseSms(p.slice(1,p.length>2?-1:undefined).join("~"));if(d)d.fecha=fechaDe(p.length>2?p[p.length-1]:"");src="sms"}
+  var fin=function(){HECHO[id]=1;delete PEND[id];try{var b=firebase.firestore().batch();b.delete(ref);b.commit().catch(function(){})}catch(e){}};
+  if(!d||(!src)){fin();return}
+  if(d.skip||!d.monto){c[k].ult={t:Date.now(),ok:d.skip==="codigo",sinMonto:!d.skip||d.skip==="monto",skip:d.skip||"monto"};guardar(c);fin();pintar();return}
+  var acc=cuentaPara(k,d,c),cat=d.tipo==="gasto"&&typeof guess==="function"?guess(d.comercio):"";
+  try{qSend("Gastos!A1:J1",[[d.fecha,d.monto,d.comercio,acc,"COP",src,d.tipo,"",cat||"",""]])}catch(e){return}
+  c[k].ult={t:Date.now(),ok:true,a:d.monto,mer:d.comercio,acc:acc,tipo:d.tipo};c[k].n=(c[k].n||0)+1;guardar(c);fin();
+  setTimeout(function(){try{toast((k==="ap"?"💳 Apple Pay: ":"💬 SMS: ")+(d.tipo==="ingreso"?"+":"")+plata(d.monto)+" · "+d.comercio)}catch(e){}},1400);
+  pintar();
+}
+function listo(){try{return!!(uid()&&typeof AJOK!=="undefined"&&AJOK&&typeof ACK!=="undefined"&&ACK&&typeof MCP!=="undefined"&&MCP)}catch(e){return false}}
+function tick(){escuchar();if(!listo()||document.hidden)return;Object.keys(PEND).forEach(function(id){if(!HECHO[id])procesar(id,PEND[id])})}
+function escuchar(){var u=uid(),k=llave();if(!u||!k){if(un){un();un=null;unK=""}return}if(un&&unK===u+k)return;if(un)un();unK=u+k;
+  try{un=firebase.firestore().collection("buzon").doc(k).collection("items").onSnapshot({includeMetadataChanges:false},function(s){(s.docs||[]).forEach(function(d){var id=String(d.id).split("/").pop();if(!HECHO[id])PEND[id]=d.ref});setTimeout(tick,50)},function(){})}catch(e){}}
+setInterval(tick,2500);
+try{firebase.auth().onAuthStateChanged(function(){setTimeout(escuchar,500)})}catch(e){}
+window.LKAUTO={estado:function(){return{pend:Object.keys(PEND),hecho:Object.keys(HECHO),escucha:!!un,listo:listo()}},parseSms:parseSms,parseAp:parseAp,montoEn:montoEn,cuentaPara:cuentaPara,cfg:cfg,tick:tick,enlace:enlace,llave:llave};
+
+/* ---------- Pantallas ---------- */
+function cuando(t){var m=Math.round((Date.now()-t)/60000);if(m<1)return T("hace un momento","just now");if(m<60)return T("hace "+m+" min",m+" min ago");var h=Math.round(m/60);if(h<24)return T("hace "+h+" h",h+" h ago");var d=Math.round(h/24);return T("hace "+d+(d===1?" día":" días"),d+(d===1?" day ago":" days ago"))}
+function tit(k){return k==="ap"?T("Apple Pay automático","Automatic Apple Pay"):T("SMS bancario automático","Automatic bank SMS")}
+function subt(k,c){var u=c[k].ult;if(u&&u.sinMonto)return'<span style="color:var(--neg)">'+T("Revisa tu atajo: no llegó el monto","Check your shortcut: no amount received")+"</span>";if(u&&u.ok&&u.a)return T("Activo · último ","Active · last ")+cuando(u.t);return k==="sms"?T("Usa Atajos de iOS para capturar SMS","Uses iOS Shortcuts to capture SMS"):T("Registra gastos de Apple Pay","Logs Apple Pay expenses")}
+function seccion(){var c=cfg();return'<h2>'+T("Automatización en iOS","iOS automation")+'</h2><div class="sg">'+srow("💬",T("SMS bancario automático","Automatic bank SMS"),subt("sms",c),"",' data-auto="sms"')+srow("💳",T("Apple Pay automático","Automatic Apple Pay"),subt("ap",c),"",' data-auto="ap"')+'</div>'}
+var CSS=".au-n{width:30px;height:30px;border-radius:50%;background:var(--sf2);color:var(--ac);display:grid;place-items:center;font-weight:700;font-size:14px;flex:none}.au-st{display:flex;gap:12px;align-items:center;margin-top:12px}.au-av{border-radius:16px;padding:12px 14px;margin-top:12px;font-size:14px;line-height:1.45;display:flex;gap:10px}.au-ol{padding-left:20px;margin:6px 0 0;font-size:14px;line-height:1.55}.au-ol li{margin-top:6px}.au-code{font:12px ui-monospace,Menlo,monospace;background:var(--sf2);border-radius:10px;padding:8px 10px;word-break:break-all;margin-top:8px;color:var(--mut)}.au-rg{display:flex;align-items:center;gap:10px;background:var(--sf2);border-radius:14px;padding:10px 12px;margin-top:8px}.au-row{display:flex;gap:8px;align-items:center;margin-top:8px}.au-row input{flex:1;min-width:0;margin:0}.au-row select{width:34%;flex:none;margin:0}.au-add{width:44px;height:44px;border-radius:50%;border:0;background:var(--ac);color:var(--acink,#fff);font-size:24px;font-weight:700;flex:none;cursor:pointer}.au-x{border:0;background:none;color:var(--mut);font-size:20px;padding:4px 8px;cursor:pointer}.au-tip{font-size:13px;color:var(--mut);margin-top:10px;line-height:1.45}";
+var st=document.createElement("style");st.textContent=CSS;(document.head||document.documentElement).appendChild(st);
+function opciones(sel,vacio){return'<option value="">'+E(vacio)+'</option>'+cuentas().map(function(n){return'<option value="'+E(n)+'"'+(n===sel?" selected":"")+">"+E(n)+"</option>"}).join("")}
+function hoja(k){K=k;var c=cfg(),u=c[k].ult,ap=k==="ap";
+  var h='<div class="handle"></div><h1 style="font-size:22px;text-align:center">'+tit(k)+'</h1>';
+  if(u&&u.sinMonto)h+='<div class="au-av" style="background:rgba(255,59,48,.12)"><span>⚠️</span><span>'+(ap?T("Tu atajo no está mandando el monto, así que los pagos recientes de Apple Pay no se guardaron. Revisa el paso «Texto» del atajo en «Activar».","Your shortcut isn't sending the amount, so recent Apple Pay payments weren't saved. Check the «Text» step in «Activate»."):T("El último SMS que llegó no traía un monto. Si era una compra, revisa que el atajo mande el contenido del mensaje.","The last SMS had no amount. If it was a purchase, make sure the shortcut sends the message content."))+"</span></div>";
+  else if(u&&u.ok&&u.a)h+='<div class="au-av" style="background:rgba(52,199,89,.13)"><span>✅</span><span><b>'+T("Funcionando","Working")+"</b> · "+T("último: ","last: ")+(u.tipo==="ingreso"?"+":"")+plata(u.a)+" · "+E(u.mer)+(u.acc?" → "+E(u.acc):"")+" · "+cuando(u.t)+(c[k].n?"<br>"+c[k].n+" "+T("movimientos guardados solos","transactions saved automatically"):"")+"</span></div>";
+  h+='<h2 style="text-align:center;margin-top:20px">'+T("¿Cómo funciona?","How does it work?")+'</h2><p class="mut" style="text-align:center;font-size:14px;margin:4px 0 6px">'+(ap?T("Cada vez que pagas con Apple Pay, un Atajo de iOS envía el gasto a Lu-Ks automáticamente.","Every time you pay with Apple Pay, an iOS Shortcut sends the expense to Lu-Ks automatically."):T("Cada vez que tu banco te manda el SMS de una compra, un Atajo de iOS lo envía a Lu-Ks y se guarda solo.","Every time your bank texts you about a purchase, an iOS Shortcut sends it to Lu-Ks and it's saved automatically."))+"</p>";
+  var pasos=ap?[[T("Pagas con Apple Pay en cualquier comercio","You pay with Apple Pay anywhere"),"💳"],[T("El Atajo se activa automáticamente","The Shortcut runs automatically"),"⚡"],[T("Lu-Ks guarda el gasto sin que hagas nada","Lu-Ks saves the expense for you"),"✓"]]:[[T("Tu banco te manda el SMS de la compra","Your bank texts you about the purchase"),"💬"],[T("El Atajo lo envía a Lu-Ks","The Shortcut sends it to Lu-Ks"),"⚡"],[T("Lu-Ks lee el monto, el comercio y la tarjeta y lo guarda","Lu-Ks reads the amount, merchant and card and saves it"),"✓"]];
+  pasos.forEach(function(p,i){h+='<div class="au-st"><div class="au-n">'+(i+1)+'</div><div style="flex:1;font-size:15px">'+p[0]+'</div><div class="mut">'+p[1]+"</div></div>"});
+  h+='<p class="au-tip">'+T("Llegan al instante a tu buzón privado y se guardan en cuanto Lu-Ks está abierta en cualquiera de tus dispositivos (si está cerrada, al abrirla).","They reach your private inbox instantly and are saved as soon as Lu-Ks is open on any of your devices (if it's closed, when you open it).")+"</p>";
+  h+='<button class="btn ghost" data-auto="cfg">⚙️ '+T("Configurar cuentas y tarjetas","Set up accounts and cards")+'</button><button class="btn" data-auto="act">⚡ '+T("Activar","Activate")+"</button>";
+  xOpen(h)}
+function activar(k){K=k;var ap=k==="ap";xOpen('<div class="handle"></div><p class="mut" style="text-align:center;margin-top:30px">'+T("Preparando tu enlace…","Preparing your link…")+"</p>");
+  asegurar().then(function(key){var url=enlace(key),h='<div class="handle"></div><h1 style="font-size:21px;text-align:center">'+T("Activar ","Activate ")+(ap?"Apple Pay":"SMS")+"</h1>";
+    h+='<div class="au-st"><div class="au-n">1</div><div style="flex:1"><b>'+T("Copia tu enlace personal","Copy your personal link")+'</b><div class="mut" style="font-size:13px">'+T("Es solo tuyo: no lo compartas.","It's only yours: don't share it.")+'</div></div></div><div class="au-code">'+E(url.slice(0,70))+"…</div>"+'<button class="btn ghost" data-auto="copy" style="margin-top:8px">📋 '+T("Copiar mi enlace","Copy my link")+"</button>";
+    if(LINKS[k]){h+='<div class="au-st"><div class="au-n">2</div><div style="flex:1"><b>'+T("Instala el atajo","Install the shortcut")+'</b><div class="mut" style="font-size:13px">'+T("Al agregarlo te pide el enlace: pégalo.","When adding it, it asks for the link: paste it.")+'</div></div></div><button class="btn" data-auto="link">'+T("Instalar atajo","Install shortcut")+"</button>"}
+    h+='<div class="au-st"><div class="au-n">'+(LINKS[k]?3:2)+'</div><div style="flex:1"><b>'+T("Crea la automatización en Atajos","Create the automation in Shortcuts")+"</b></div></div>";
+    var li=ap?[
+      T("Abre la app <b>Atajos</b> → pestaña <b>Automatización</b> → <b>+</b> → <b>Transacción</b>.","Open <b>Shortcuts</b> → <b>Automation</b> tab → <b>+</b> → <b>Transaction</b>."),
+      T("Elige tus tarjetas, marca <b>Ejecutar inmediatamente</b> y toca <b>Siguiente</b> → <b>Nuevo atajo en blanco</b>.","Pick your cards, choose <b>Run Immediately</b>, tap <b>Next</b> → <b>New Blank Automation</b>."),
+      LINKS.ap?T("Agrega la acción <b>Ejecutar atajo</b> y elige <b>Lu-Ks Apple Pay</b> (el que instalaste).","Add <b>Run Shortcut</b> and choose <b>Lu-Ks Apple Pay</b>."):T("Agrega la acción <b>Texto</b> y escribe <b>ap~</b>; luego inserta las variables <b>Importe</b>, <b>~</b>, <b>Comerciante</b>, <b>~</b>, <b>Nombre</b> (de la tarjeta), <b>~</b> y <b>Fecha actual</b> (toca la fecha → formato <b>ISO 8601</b>).","Add a <b>Text</b> action with <b>ap~</b>, then insert <b>Amount</b>, <b>~</b>, <b>Merchant</b>, <b>~</b>, <b>Name</b> (card), <b>~</b> and <b>Current Date</b> (ISO 8601).")
+    ]:[
+      T("Abre la app <b>Atajos</b> → pestaña <b>Automatización</b> → <b>+</b> → <b>Mensaje</b>.","Open <b>Shortcuts</b> → <b>Automation</b> tab → <b>+</b> → <b>Message</b>."),
+      T("En <b>El mensaje contiene</b> escribe una palabra que siempre trae el SMS de tu banco (ej. <b>Compra</b>, <b>Bancolombia</b>, <b>Nequi</b>). Marca <b>Ejecutar inmediatamente</b> → <b>Siguiente</b> → <b>Nuevo atajo en blanco</b>. Haz una por cada banco.","In <b>Message Contains</b> type a word your bank's SMS always has (e.g. <b>Compra</b>). Choose <b>Run Immediately</b> → <b>Next</b> → <b>New Blank Automation</b>. One per bank."),
+      LINKS.sms?T("Agrega la acción <b>Ejecutar atajo</b>, elige <b>Lu-Ks SMS</b> y como entrada el <b>Mensaje</b>.","Add <b>Run Shortcut</b>, choose <b>Lu-Ks SMS</b> with the <b>Message</b> as input."):T("Agrega la acción <b>Texto</b> y escribe <b>sms~</b>; luego inserta <b>Contenido</b> (del mensaje), <b>~</b> y <b>Fecha actual</b> (formato <b>ISO 8601</b>).","Add a <b>Text</b> action with <b>sms~</b>, then insert the message <b>Content</b>, <b>~</b> and <b>Current Date</b> (ISO 8601).")
+    ];
+    if(!LINKS[k])li=li.concat([
+      T("Agrega <b>Reemplazar texto</b>: busca <b>/</b> y reemplaza con <b>-</b>.","Add <b>Replace Text</b>: find <b>/</b>, replace with <b>-</b>."),
+      T("Agrega <b>Codificar URL</b>.","Add <b>URL Encode</b>."),
+      T("Agrega <b>Obtener contenido de URL</b>: en la URL pega tu enlace y justo al final inserta <b>Texto codificado en URL</b>. Toca <b>›</b> y elige método <b>POST</b>.","Add <b>Get Contents of URL</b>: paste your link and insert <b>URL Encoded Text</b> at the end. Tap <b>›</b> and choose method <b>POST</b>.")
+    ]);
+    li.push(ap?T("¡Listo! Haz un pago con Apple Pay y aparecerá en Lu-Ks.","Done! Pay with Apple Pay and it will show up in Lu-Ks."):T("¡Listo! Con la próxima compra verás el gasto en Lu-Ks.","Done! Your next purchase will show up in Lu-Ks."));
+    h+='<ol class="au-ol">'+li.map(function(x){return"<li>"+x+"</li>"}).join("")+"</ol>";
+    h+='<button class="btn ghost" data-auto="atajos" style="margin-top:14px">'+T("Abrir Atajos","Open Shortcuts")+'</button><button class="btn ghost" data-auto="volver">‹ '+T("Volver","Back")+"</button>";
+    xOpen(h)}).catch(function(){xOpen('<div class="handle"></div><p class="mut" style="text-align:center;margin-top:30px">'+T("Espera a que carguen tus datos e intenta otra vez.","Wait for your data to load and try again.")+'</p><button class="btn ghost" data-auto="volver">‹ '+T("Volver","Back")+"</button>")})}
+function conf(k){K=k;var c=cfg(),x=c[k],ap=k==="ap",pri=principal();
+  var h='<div class="handle"></div><h1 style="font-size:21px">'+T("Cuentas y tarjetas","Accounts and cards")+'</h1><p class="mut" style="margin:2px 0 0">'+(ap?"Apple Pay":"SMS")+"</p>";
+  h+='<h2>'+T("Asignación de cuentas","Account assignment")+'</h2><label>'+(ap?T("Cuenta por defecto (todos los pagos con Apple Pay)","Default account (all Apple Pay payments)"):T("Cuenta por defecto (todos los SMS)","Default account (all SMS)"))+'<select id="au-def">'+opciones(x.def,pri?T("Cuenta principal","Main account")+" ("+pri+")":T("Sin cuenta","No account"))+"</select></label>";
+  h+='<p class="au-tip">ⓘ '+(ap?T("Primero aplicamos tus reglas de abajo (nombres de tarjeta). Esta cuenta solo se usa cuando ninguna coincide con el pago.","Your rules below (card names) go first. This account is only used when none matches."):T("Primero aplicamos tus reglas de abajo (últimos 4 y palabras). Esta cuenta solo se usa cuando ninguna coincide con el SMS.","Your rules below (last 4 and words) go first. This account is only used when none matches the SMS."))+"</p>";
+  if(ap){h+='<h3 style="margin:18px 0 4px">'+T("Tus tarjetas de Wallet","Your Wallet cards")+"</h3>";
+    if(!x.vistas.length)h+='<p class="au-tip">💳 '+T("Todavía no hemos visto ninguna tarjeta. Haz un pago con Apple Pay y aparecerá aquí para asignarle una cuenta.","No cards seen yet. Pay with Apple Pay and it will show up here so you can assign an account.")+"</p>";
+    x.vistas.forEach(function(v,i){var r=x.reglas.filter(function(r){return N(r.k)===N(v)})[0];h+='<div class="au-rg"><div style="flex:1;min-width:0"><b>'+E(v)+'</b></div><select data-auv="'+i+'" style="width:46%;margin:0">'+opciones(r?r.acc:"",T("Por defecto","Default"))+"</select></div>"})}
+  h+='<label style="margin-top:16px">'+(ap?T("Nombre de tu tarjeta en Wallet, o una palabra de él (ej. SIGNATURE AVIANCA)","Your card name in Wallet, or a word of it (e.g. SIGNATURE AVIANCA)"):T("Últimos 4 o palabra que aparezca en el SMS (ej. 1234, Nequi)","Last 4 digits or a word in the SMS (e.g. 1234, Nequi)"))+"</label>";
+  h+='<div class="au-row"><input id="au-k" placeholder="'+(ap?T("Nombre de la tarjeta","Card name"):T("Últimos 4 o palabra","Last 4 or word"))+'"><select id="au-acc">'+opciones("",T("Cuenta…","Account…"))+'</select><button class="au-add" data-auto="add" aria-label="'+T("Agregar regla","Add rule")+'">+</button></div>';
+  x.reglas.forEach(function(r,i){var d=/^\d{4}$/.test(String(r.k));h+='<div class="au-rg"><span style="font-size:18px">'+(d?"💳":"🔤")+'</span><div style="flex:1;min-width:0"><b>'+(d?"•••• "+E(r.k):"“"+E(r.k)+"”")+'</b><div class="mut" style="font-size:13px">'+E(r.acc)+'</div></div><button class="au-x" data-auto="del" data-i="'+i+'" aria-label="'+T("Quitar","Remove")+'">✕</button></div>'});
+  h+='<p class="au-tip">ⓘ '+(ap?T("Escríbelo tal como aparece en Wallet; basta con una palabra suya. No importan mayúsculas ni tildes y si coinciden varias gana la más larga.","Type it as it appears in Wallet; one word is enough. Case and accents don't matter; the longest match wins."):T("Si escribes 4 números se toma como tarjeta; cualquier otra cosa se busca como palabra en el mensaje (útil para Nequi). No importan mayúsculas ni tildes y si coinciden varias palabras gana la más larga.","4 digits are taken as a card; anything else is searched as a word in the message (useful for Nequi). Case and accents don't matter; the longest match wins."))+'</p><p class="au-tip">🔒 '+T("Tus reglas se guardan en tu cuenta privada de Lu-Ks.","Your rules are saved in your private Lu-Ks account.")+'</p><button class="btn ghost" data-auto="volver">‹ '+T("Volver","Back")+"</button>";
+  xOpen(h)}
+function copiar(s){var ok=T("Enlace copiado ✓","Link copied ✓");try{if(window.LUKS_APP&&window.ReactNativeWebView){window.ReactNativeWebView.postMessage(JSON.stringify({t:"copy",s:s,msg:ok}));return}}catch(e){}
+  try{navigator.clipboard.writeText(s).then(function(){toast(ok)}).catch(function(){toast(T("No se pudo copiar","Couldn't copy"))})}catch(e){toast(T("No se pudo copiar","Couldn't copy"))}}
+function abierto(){var x=document.getElementById("xsheet");return x&&x.classList.contains("on")&&document.querySelector("#xbody [data-auto]")}
+function pintar(){try{if(typeof tab!=="undefined"&&tab==="con"&&!SUB)render()}catch(e){}}
+document.addEventListener("click",function(e){var b=e.target&&e.target.closest&&e.target.closest("[data-auto]");if(!b)return;var a=b.dataset.auto;e.preventDefault();e.stopPropagation();
+  if(a==="ap"||a==="sms")return hoja(a);
+  if(a==="cfg")return conf(K);
+  if(a==="act")return activar(K);
+  if(a==="volver")return hoja(K);
+  if(a==="copy"){var k=llave();if(k)copiar(enlace(k));return}
+  if(a==="link"){if(LINKS[K])location.href=LINKS[K];return}
+  if(a==="atajos"){location.href="shortcuts://";return}
+  if(a==="add"){var w=(document.getElementById("au-k")||{}).value||"",ac=(document.getElementById("au-acc")||{}).value||"";w=w.trim();if(!w){toast(K==="ap"?T("Escribe el nombre de la tarjeta","Type the card name"):T("Escribe los últimos 4 o una palabra","Type the last 4 or a word"));return}if(!ac){toast(T("Elige la cuenta","Choose the account"));return}var c=cfg();c[K].reglas=c[K].reglas.filter(function(r){return N(r.k)!==N(w)});c[K].reglas.unshift({k:w,acc:ac});if(guardar(c))conf(K);return}
+  if(a==="del"){var c2=cfg();c2[K].reglas.splice(+b.dataset.i,1);if(guardar(c2))conf(K);return}
+},true);
+document.addEventListener("change",function(e){var t=e.target;if(!t||!abierto())return;var c=cfg();
+  if(t.id==="au-def"){c[K].def=t.value;if(guardar(c))conf(K);return}
+  if(t.dataset&&t.dataset.auv!=null){var v=c.ap.vistas[+t.dataset.auv];if(!v)return;c.ap.reglas=c.ap.reglas.filter(function(r){return N(r.k)!==N(v)});if(t.value)c.ap.reglas.unshift({k:v,acc:t.value});if(guardar(c))conf("ap")}
+},true);
+// Sección en Ajustes
+(function enganchar(){if(typeof window.con2!=="function"){setTimeout(enganchar,300);return}if(window.con2.__auto)return;var o=window.con2;window.con2=function(){var h=o.apply(this,arguments);try{if(!SUB&&typeof h==="string"&&h.indexOf("<h2>Configuración</h2>")>=0)h=h.replace("<h2>Configuración</h2>",seccion()+"<h2>Configuración</h2>")}catch(e){}return h};window.con2.__auto=1})();
+})();
+
 /* ===== Lu-Ks: acceso a Lu-Ks Tienda (licencias) ===== */
 (function(){
 var LIC=null,LOK=false,CFG={},un=null;
