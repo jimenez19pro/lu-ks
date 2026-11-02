@@ -332,6 +332,243 @@ nav button.tab[aria-current=page]{color:var(--ac);font-weight:600}
 .ld-f .e{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:color-mix(in srgb,var(--ac) 13%,transparent);color:var(--ac);font-size:22px}
 .ld-f .e .liw{margin:0}.ld-f .e .li{width:24px;height:24px}
 .ld-shots img{border-radius:30px;border:6px solid #000}
+
+/* ===== Lu-Ks: diseño nuevo (igual a la app) — solo en el navegador (html.nv) ===== */
+html.nv{--nvHd1:color-mix(in srgb,var(--ac) 10%,#0A0E1F);--nvHd2:color-mix(in srgb,var(--ac) 28%,#0A0E1F);--nvHd3:color-mix(in srgb,var(--ac) 50%,#1E1B3A)}
+.nv-fila{display:flex;align-items:center}
+
+/* ---------- Inicio: encabezado oscuro + hoja clara ---------- */
+html.nv.nv-home body{background:var(--nvHd1)}
+html.nv.nv-home{background:var(--nvHd1)}
+html.nv.nv-home body::before{background:none!important}
+html.nv #app .nv-top{margin:-18px -16px 0;padding:calc(18px + env(safe-area-inset-top,0px)) 16px 44px;margin-top:calc(-18px - env(safe-area-inset-top,0px));background:linear-gradient(180deg,var(--nvHd1) 0%,var(--nvHd2) 55%,var(--nvHd3) 100%);color:#fff}
+html.nv #app .nv-top .hd .av,html.nv #app .nv-top .circ{background:rgba(255,255,255,.16)!important;color:#fff!important;box-shadow:none!important;border:0!important}
+html.nv #app .nv-top .hd-d,html.nv #app .nv-top .hd-d *{color:rgba(255,255,255,.7)!important}
+html.nv #app .nv-top .hd-h{color:#fff!important}
+html.nv #app .nv-top>*:not(.hd):not(.seg):not(.hero):not(.nv-rap):not(div[style*="margin-top:12px"]){background:rgba(255,255,255,.1)!important;color:rgba(255,255,255,.85)!important;border:0!important;box-shadow:none!important}
+html.nv #app .nv-top>*:not(.hd):not(.seg):not(.hero):not(.nv-rap) *{color:inherit}
+html.nv #app .nv-top .mut{color:rgba(255,255,255,.65)!important}
+html.nv #app .nv-top .seg{background:rgba(255,255,255,.12)!important;border-radius:999px!important;padding:3px!important}
+html.nv #app .nv-top .seg button{color:rgba(255,255,255,.75)!important;background:none!important;border-radius:999px!important;font-size:14px!important;padding:8px 16px!important}
+html.nv #app .nv-top .seg button[aria-pressed=true]{background:#fff!important;color:#0A0E1F!important;box-shadow:0 2px 6px rgba(0,0,0,.12)!important}
+html.nv #app .nv-top #peropen,html.nv #app .nv-top .pnav{background:rgba(255,255,255,.12)!important;color:#fff!important;border:0!important;box-shadow:none!important}
+html.nv #app .nv-top #peropen *,html.nv #app .nv-top .pnav *{color:#fff!important}
+html.nv #app .nv-top .pnav+*{color:rgba(255,255,255,.7)!important}
+html.nv #app .nv-top .hero{background:none!important;box-shadow:none!important;padding:0!important;margin-top:22px!important;color:#fff!important;border:0!important;border-radius:0!important}
+html.nv #app .nv-top .hero::before,html.nv #app .nv-top .hero::after{display:none!important}
+html.nv #app .nv-top .hero-t{color:rgba(255,255,255,.75)!important;font-size:15px;font-weight:500;justify-content:flex-start!important;gap:10px}
+html.nv #app .nv-top .hero-t .lnk{color:rgba(255,255,255,.75)!important}
+html.nv #app .nv-top .hero-v{color:#fff!important;font-size:clamp(34px,11.5vw,46px)!important;font-weight:700!important;letter-spacing:-1px;margin-top:2px;line-height:1.1}
+html.nv #app .nv-top .hero-v.neg{color:#FF8A80!important}
+html.nv #app .nv-top .hero-b{background:rgba(255,255,255,.18)!important;height:6px!important;margin-top:10px}
+html.nv #app .nv-top .hero-b i{background:#fff!important}
+html.nv #app .nv-top .hero-s{color:rgba(255,255,255,.72)!important;font-size:13px!important;margin-top:8px}
+.nv-rap{display:flex;justify-content:space-between;margin-top:22px}
+.nv-rap button{width:23%;background:none;border:0;color:rgba(255,255,255,.85);font:600 12px inherit;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0;cursor:pointer}
+.nv-rap span{width:58px;height:58px;border-radius:20px;display:grid;place-items:center;background:rgba(255,255,255,.12);border:.5px solid rgba(255,255,255,.14);color:#fff;transition:transform .12s,background .15s}
+.nv-rap span svg{width:24px;height:24px}
+.nv-rap button:active span{transform:scale(.92);background:rgba(255,255,255,.2)}
+html.nv #app .nv-hoja{margin:-26px -16px 0;padding:8px 16px 0;background:var(--bg);border-radius:28px 28px 0 0;position:relative;min-height:60vh}
+.nv-agarre{width:38px;height:5px;border-radius:3px;background:var(--ln);margin:0 auto 2px}
+.nv-g{margin-top:18px}
+.nv-gh{display:flex;align-items:flex-end;gap:10px}
+.nv-gh b{font-size:17px}
+.nv-gp{font-size:13px;margin-top:1px;text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nv-gt{font-size:24px;font-weight:700;letter-spacing:-.4px}
+.nv-multi{display:flex;gap:3px;height:12px;margin-top:14px;transform-origin:left center}
+.nv-multi i{min-width:4px;border-radius:4px}
+.nv-crece1{animation:nvCrece .9s cubic-bezier(.33,1,.68,1) .75s both}
+.nv-crece{animation:nvCrece .9s cubic-bezier(.33,1,.68,1) .15s both}
+@keyframes nvCrece{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.nv-ley{display:flex;flex-wrap:wrap;margin-top:12px;row-gap:10px}
+.nv-ley button{width:50%;display:flex;align-items:center;gap:6px;padding:0 10px 0 0;background:none;border:0;font:inherit;font-size:13px;color:var(--ink);cursor:pointer;text-align:left;min-width:0}
+.nv-ley i{width:9px;height:9px;border-radius:5px;flex:none}
+.nv-ley span{flex-shrink:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nv-ley b{font-weight:600;white-space:nowrap}
+/* entrada al abrir */
+#app.nv-ent .nv-top .hd{animation:nvAp .5s cubic-bezier(.16,1,.3,1) both}
+#app.nv-ent .nv-top .hero{animation:nvAp .55s cubic-bezier(.16,1,.3,1) .05s both}
+#app.nv-ent .nv-rap span{animation:nvPop .45s cubic-bezier(.16,1,.3,1) calc(.12s + var(--i)*.05s) both}
+#app.nv-ent .nv-hoja{animation:nvSube .85s cubic-bezier(.16,1,.3,1) .08s both}
+@keyframes nvAp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes nvPop{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
+@keyframes nvSube{from{transform:translateY(70px)}to{transform:none}}
+
+/* ---------- Barra de abajo flotante ---------- */
+html.nv body>nav{left:0!important;right:0!important;bottom:0!important;padding:0 14px max(10px,env(safe-area-inset-bottom,0px))!important;background:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border:0!important;box-shadow:none!important;pointer-events:none}
+html.nv body>nav>div{display:flex!important;align-items:center;position:relative;max-width:444px;margin:0 auto;padding:4px 72px 4px 4px;height:62px;box-sizing:content-box;pointer-events:none}
+html.nv body>nav>div::before{content:"";position:absolute;left:0;top:0;bottom:0;right:68px;border-radius:31px;background:color-mix(in srgb,var(--sf) 94%,transparent);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border:.5px solid var(--ln);box-shadow:0 6px 16px rgba(0,0,0,.14);pointer-events:auto}
+html.nv body>nav .tab{flex:1;height:100%;position:relative;z-index:1;color:var(--mut)!important;font-size:10.5px!important;gap:2px!important;justify-content:center;pointer-events:auto}
+html.nv body>nav .tab svg{width:23px!important;height:23px!important}
+html.nv body>nav .tab[aria-current=page]{color:var(--ac)!important;font-weight:700!important}
+html.nv .nv-on{position:absolute;left:0;top:4px;bottom:4px;border-radius:27px;background:color-mix(in srgb,var(--ac) 13%,transparent);transition:transform .45s cubic-bezier(.34,1.4,.64,1),width .3s;z-index:0;pointer-events:none}
+html.nv[data-theme=dark] .nv-on{background:color-mix(in srgb,var(--ac) 26%,transparent)}
+@media (prefers-color-scheme:dark){html.nv:not([data-theme=light]) .nv-on{background:color-mix(in srgb,var(--ac) 26%,transparent)}}
+html.nv body>nav .fab{position:absolute;right:0;top:6px;margin:0!important;border:0!important;width:58px!important;height:58px!important;box-shadow:0 6px 12px color-mix(in srgb,var(--ac) 40%,transparent)!important;pointer-events:auto;order:9}
+html.nv body>nav .fab svg{width:28px;height:28px}
+html.nv #app{padding-bottom:120px}
+
+/* ---------- Tarjeta de plástico ---------- */
+.nv-pl{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;box-sizing:border-box;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.nv-pl.nv-port{background:#111}
+.nv-pl.nv-port::after{content:"";position:absolute;inset:0;border-radius:inherit;border:.5px solid rgba(255,255,255,.18);pointer-events:none}
+.nv-brillo{position:absolute;left:-20%;width:140%;height:55%;background:rgba(255,255,255,.08);transform:rotate(-24deg);pointer-events:none}
+.nv-pl-t{gap:10px;align-items:flex-start;position:relative}
+.nv-pl-t .stile{flex:none}
+.nv-pl-n{font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nv-pl-s{font-size:12px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nv-pl-m{font-size:18px;font-weight:700;margin-bottom:8px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.nv-pl .nv-fila{justify-content:space-between;position:relative}
+.nv-lu{text-align:center;font-weight:900;letter-spacing:-2px;line-height:1;position:relative}
+.nv-chipT{width:40px;height:30px;border-radius:7px;border:1px solid;position:relative}
+.nv-red{font-weight:900;font-size:15px}
+.nv-red.v{font-size:22px;font-style:italic;letter-spacing:.5px}
+.nv-mc{display:flex}.nv-mc i{width:26px;height:26px;border-radius:50%;background:#EB001B}.nv-mc i+i{background:rgba(247,158,27,.92);margin-left:-10px}
+
+/* ---------- Mis cuentas ---------- */
+#nv-cu{position:fixed;inset:0;z-index:25;background:var(--bg);overflow:hidden}
+html.nv-cu-on body{overflow:hidden}
+html.nv-cu-on body>nav{visibility:hidden}
+.nv-cu-fondo{position:absolute;left:0;right:0;top:0;pointer-events:none;transition:background .35s}
+.nv-cu-sc{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.nv-cu-in{max-width:520px;margin:0 auto;padding:calc(6px + env(safe-area-inset-top,0px)) 0 calc(30px + env(safe-area-inset-bottom,0px));position:relative}
+.nv-cu-hd{justify-content:space-between;padding:10px 16px 0}
+.nv-cu-hd b{font-size:17px}
+.nv-circ{width:40px;height:40px;border-radius:50%;border:0;display:grid;place-items:center;background:color-mix(in srgb,var(--sf) 85%,transparent);color:var(--ink);cursor:pointer;padding:0}
+.nv-circ svg{width:20px;height:20px}
+.nv-circ.ac{background:var(--ac);color:#fff}
+.nv-car{position:relative;margin-top:10px;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.nv-car-in{position:absolute;left:0;right:0}
+.nv-carta{position:absolute;top:0;will-change:transform,opacity;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.nv-carta img{pointer-events:none;-webkit-user-drag:none}
+.nv-sombra{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none}
+.nv-nueva{width:100%;height:100%;border-radius:30px;border:2px dashed color-mix(in srgb,var(--ink) 22%,transparent);background:var(--sf);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--ink);font:inherit;cursor:pointer;padding:0 18px;text-align:center}
+.nv-nueva b{font-size:17px;margin-top:10px}.nv-nueva .mut{font-size:13px}
+.nv-mas{width:54px;height:54px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center}
+.nv-mas svg{width:26px;height:26px}
+.nv-dots{display:flex;justify-content:center;gap:6px}
+.nv-dots button{width:6px;height:6px;border-radius:3px;border:0;padding:0;background:color-mix(in srgb,var(--ink) 22%,transparent);transition:width .25s,background .25s;cursor:pointer}
+.nv-dots button.on{width:18px;background:var(--ink)}
+.nv-cu-info{padding:0 16px}
+.nv-cu-sal{text-align:center;margin-top:18px}
+.nv-cu-sal .mut{font-size:14px}
+.nv-cu-v{font-size:40px;font-weight:700;letter-spacing:-.8px;margin-top:2px}
+.nv-cu-bar{height:8px!important;margin-top:8px}
+.nv-duo{gap:10px;margin-top:18px;align-items:stretch}
+.nv-duo>*{flex:1;min-width:0}
+.nv-duo .card .mut{font-size:13px}
+.nv-duo .card .num{font-size:20px;font-weight:700;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nv-tit{font-size:20px;font-weight:700;margin:24px 0 8px;letter-spacing:-.4px}
+.nv-inf{padding-top:4px!important;padding-bottom:4px!important}
+.nv-inf .nv-fila{justify-content:space-between;padding:13px 0;font-size:15px}
+.nv-inf .nv-fila+.nv-fila{border-top:.5px solid var(--ln)}
+.nv-btn{border:0;border-radius:16px;padding:14px;background:var(--sf);color:var(--ac);font:600 15px inherit;font-family:inherit;cursor:pointer;display:block;width:100%}
+.nv-btn.ac{background:var(--ac);color:#fff}
+.nv-btn.ink{background:var(--ink);color:var(--bg)}
+.nv-btn.grande{padding:16px;border-radius:18px;font-size:17px;font-weight:700}
+.nv-cu-nueva{text-align:center;margin-top:18px;padding:0 8px}
+.nv-cu-nueva .mut{font-size:14px;margin:6px 0 18px;line-height:1.4}
+.nv-big{font-size:30px;font-weight:700;letter-spacing:-.6px}
+.nv-movs{padding-top:2px!important;padding-bottom:2px!important}
+
+/* ---------- Formulario de cuenta ---------- */
+#nv-af{position:fixed;inset:0;z-index:28;background:rgba(0,0,0,.3);opacity:0;transition:opacity .25s}
+#nv-af.on{opacity:1}
+.nv-af-c{position:absolute;left:0;right:0;bottom:0;top:max(10px,env(safe-area-inset-top,0px));max-width:560px;margin:0 auto;background:var(--bg);border-radius:14px 14px 0 0;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .35s cubic-bezier(.2,.8,.2,1);overflow:hidden}
+#nv-af.on .nv-af-c{transform:none}
+.nv-af-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:.5px solid var(--ln);flex:none}
+.nv-af-hd b{font-size:17px}
+.nv-af-hd .lnk{font-size:17px;color:var(--ac);background:none;border:0;padding:0;cursor:pointer;font-family:inherit}
+.nv-af-sc{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.nv-af-in{padding:20px 20px calc(40px + env(safe-area-inset-bottom,0px))}
+.nv-voltea{position:relative;margin-top:6px;perspective:1000px}
+.nv-cara{position:absolute;left:0;top:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:transform .6s cubic-bezier(.34,1.3,.64,1)}
+.nv-dorso{transform:rotateY(180deg);overflow:hidden;width:100%;height:100%}
+.nv-voltea.atras .nv-cara:first-child{transform:rotateY(180deg)}
+.nv-voltea.atras .nv-dorso{transform:rotateY(360deg)}
+.nv-dorso>i{display:block;background:#111}
+.nv-dorso .nv-fila{gap:12px;padding:18px}
+.nv-dorso .nv-fila>div{flex:1;background:rgba(255,255,255,.92);border-radius:8px;padding:8px 10px}
+.nv-dorso span{display:block;color:#555;font-size:11px}
+.nv-dorso b{color:#111;font-size:20px}
+.nv-seg{display:flex;padding:3px;border-radius:14px;background:var(--sf2);margin-top:20px}
+.nv-seg button{flex:1;padding:9px 4px;border-radius:11px;border:0;background:none;color:var(--mut);font:600 14px inherit;font-family:inherit;cursor:pointer}
+.nv-seg button.on{background:var(--sf);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.nv-sw{margin-top:14px;padding:10px 14px;border-radius:14px;background:var(--sf);gap:12px;font-size:16px}
+.nv-lb{display:block;font-size:13px;color:var(--mut);margin:14px 0 6px 4px}
+.nv-in{display:flex;width:100%;box-sizing:border-box;border:0;border-radius:14px;padding:13px 14px;min-height:50px;font:16px inherit;font-family:inherit;background:var(--sf);color:var(--ink);outline:none;cursor:text}
+button.nv-in{cursor:pointer}
+.nv-in:focus{box-shadow:0 0 0 2px color-mix(in srgb,var(--ac) 45%,transparent)}
+.nv-chip{border:0;border-radius:999px;padding:8px 14px;background:var(--sf);color:var(--ink);font:600 14px inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
+.nv-chip.ac{background:var(--ac);color:#fff}
+.lnk.neg{color:var(--neg)!important;font-weight:600;background:none;border:0;cursor:pointer;font-size:15px;font-family:inherit}
+.nv-dot{width:38px;height:38px;border-radius:50%;border:3px solid transparent;font-weight:800;font-size:14px;cursor:pointer;padding:0}
+.nv-dot.on{border-color:var(--ink)}
+.nv-ayuda{font-size:13px;margin-top:6px;line-height:1.4}
+.nv-err{color:var(--neg);font-size:15px;text-align:center;margin-top:16px;min-height:1px}
+.nv-af-in .nv-btn.grande.ink{margin-top:22px}
+.nv-bk{width:100%;gap:12px;padding:10px 0;border:0;border-bottom:.5px solid var(--ln);background:none;color:var(--ink);font:16px inherit;font-family:inherit;cursor:pointer}
+/* animación al guardar */
+.nv-anim{position:absolute;inset:0;z-index:2;opacity:0;transition:opacity .3s}
+.nv-anim.on{opacity:1}
+.nv-anim-in{max-width:520px;margin:0 auto;height:100%;box-sizing:border-box;display:flex;flex-direction:column;padding:calc(48px + env(safe-area-inset-top,0px)) 20px calc(24px + env(safe-area-inset-bottom,0px))}
+.nv-bigT{color:#fff;font-size:26px;font-weight:800;letter-spacing:-.5px}
+.nv-bigS{color:rgba(255,255,255,.65);font-size:15px;margin-top:4px}
+.nv-at-card{display:flex;justify-content:center;margin-top:28px;transition:margin .4s}
+.nv-pasos{margin-top:30px;border-radius:20px;padding:18px;background:rgba(255,255,255,.07)}
+.nv-paso{flex:1;display:flex;flex-direction:column;align-items:center}
+.nv-paso span{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.12);color:#fff;font-weight:800;font-size:15px;transition:background .3s}
+.nv-paso em{font-style:normal;color:rgba(255,255,255,.5);font-size:12px;margin-top:6px}
+.nv-paso.act span{background:#5E5CE6}.nv-paso.hecho span{background:#34C759}
+.nv-paso.act em,.nv-paso.hecho em{color:#fff}
+.nv-prog{height:6px;border-radius:3px;background:rgba(255,255,255,.12);margin-top:18px;overflow:hidden}
+.nv-prog i{display:block;height:100%;width:0;border-radius:3px;background:#fff;transition:width .7s cubic-bezier(.45,0,.55,1)}
+.nv-pe{color:rgba(255,255,255,.75);font-size:13px;margin-top:10px}
+.nv-ok,.nv-okb{display:none}
+.nv-anim.fin .nv-at,.nv-anim.fin .nv-pasos{display:none}
+.nv-anim.fin .nv-at-card{margin-top:40px}
+.nv-anim.fin .nv-ok{display:flex;flex-direction:column;align-items:center;margin-top:34px;animation:nvAp .6s cubic-bezier(.34,1.4,.64,1) both}
+.nv-anim.fin .nv-okb{display:block;animation:nvAp .5s ease-out .1s both}
+.nv-check{width:64px;height:64px;border-radius:50%;background:#34C759;color:#fff;font-size:30px;font-weight:800;display:grid;place-items:center}
+/* recortar portada */
+#nv-crop{position:fixed;inset:0;z-index:40;background:var(--bg)}
+.nv-crop-c{max-width:560px;margin:0 auto;padding-top:env(safe-area-inset-top,0px)}
+.nv-crop-v{margin:0 auto;overflow:hidden;border-radius:16px;position:relative;touch-action:none;background:#000;box-shadow:0 0 0 2px var(--ac)}
+.nv-crop-v img{position:absolute;left:0;top:0;transform-origin:0 0;max-width:none;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.nv-zoom{display:block;width:calc(100% - 64px);margin:22px auto;accent-color:var(--ac)}
+
+/* ---------- Bienvenida ---------- */
+#nv-bv{position:fixed;inset:0;z-index:9500;background:#F2F2F7;overflow:hidden;color:#fff}
+@media (prefers-color-scheme:dark){#nv-bv{background:#000}}
+#nv-bv.sale{opacity:0;transition:opacity .3s}
+.nv-bv-barre{position:absolute;left:50%;top:50%;width:170vmax;height:170vmax;margin:-85vmax 0 0 -85vmax;background:linear-gradient(180deg,#2B8CFF 0%,#3B3FB6 25%,#0A0E1F 60%,#05060C 100%);transform:rotate(-35deg) translateY(185vmax)}
+#nv-bv.on .nv-bv-barre{transition:transform .7s cubic-bezier(.65,0,.35,1) 1.25s;transform:rotate(-35deg) translateY(0)}
+.nv-bv-ic{position:absolute;left:50%;top:50%;width:112px;height:112px;margin:-56px 0 0 -56px}
+#nv-bv.on .nv-bv-ic{transition:transform .6s cubic-bezier(.33,1,.68,1) 1.95s;transform:translateY(-20vh) scale(.82)}
+.nv-bv-ic i{position:absolute;top:0;width:56px;height:112px;background:#2B8CFF}
+.nv-bv-ic i.a{left:0;border-radius:27px 0 0 27px;transform:translate(-55vw,-30vh) rotate(-35deg)}
+.nv-bv-ic i.b{left:56px;border-radius:0 27px 27px 0;background:#0047D6;transform:translate(55vw,30vh) rotate(35deg)}
+#nv-bv.on .nv-bv-ic i{transition:transform .75s cubic-bezier(.34,1.3,.64,1) .15s,opacity .25s .95s;transform:none;opacity:0}
+.nv-bv-ic img{position:absolute;inset:0;width:112px;height:112px;border-radius:27px;opacity:0;transform:scale(.85)}
+#nv-bv.on .nv-bv-ic img{transition:opacity .35s .9s,transform .5s cubic-bezier(.34,1.6,.64,1) .9s;opacity:1;transform:none}
+.nv-bv-lang{position:absolute;right:16px;top:calc(10px + env(safe-area-inset-top,0px));border:0;border-radius:999px;padding:8px 14px;background:rgba(255,255,255,.14);color:#fff;font:600 14px inherit;font-family:inherit;cursor:pointer;opacity:0}
+.nv-bv-ab{position:absolute;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;padding:0 24px calc(20px + env(safe-area-inset-bottom,0px));opacity:0;transform:translateY(40px)}
+#nv-bv.on .nv-bv-lang,#nv-bv.on .nv-bv-ab{transition:opacity .7s cubic-bezier(.33,1,.68,1) 2.15s,transform .7s cubic-bezier(.33,1,.68,1) 2.15s;opacity:1;transform:none}
+.nv-bv-badge{display:inline-block;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.12);font-size:13px;font-weight:600;margin-bottom:14px}
+.nv-bv-h{font-size:40px;font-weight:800;letter-spacing:-1px;line-height:1.1}
+.nv-bv-h span{color:#7FB2FF}
+.nv-bv-s{color:rgba(255,255,255,.72);font-size:16px;line-height:1.45;margin-top:12px}
+.nv-bv-g{background:rgba(255,255,255,.12)!important;color:#fff!important;margin-top:10px;border:.5px solid rgba(255,255,255,.25)!important;font-weight:600!important}
+.nv-bv-mas{display:block;margin:14px auto 0;background:none;border:0;color:rgba(255,255,255,.6);font:500 14px inherit;font-family:inherit;cursor:pointer;padding:6px}
+/* segunda vez: sin animación */
+#nv-bv.ya *{transition:none!important}
+@media (max-height:640px){.nv-bv-h{font-size:32px}#nv-bv.on .nv-bv-ic{transform:translateY(-28vh) scale(.6)}}
+
+/* ---------- Pantalla de carga: el ícono se acerca y se desvanece ---------- */
+html.nv #splash.sp-go .sp-in{transition:transform .42s cubic-bezier(.55,0,1,.45)!important;transform:scale(2.6)!important}
+html.nv #splash{transition:opacity .3s ease-in .12s}
+
+@media (prefers-reduced-motion:reduce){#app.nv-ent *{animation:none!important}.nv-crece1,.nv-crece{animation:none!important}#nv-bv *{transition:none!important}}
 </style>
 </head>
 <body>
@@ -1659,6 +1896,325 @@ function node(t){var p=t.parentNode;if(!p||p.nodeType!==1)return;if(p.closest("t
 function fix(n){if(!n)return;if(n.nodeType===3){node(n);return}if(n.nodeType!==1)return;var w=document.createTreeWalker(n,NodeFilter.SHOW_TEXT,null),a=[],x;while(x=w.nextNode())a.push(x);a.forEach(node)}
 new MutationObserver(function(ms){ms.forEach(function(m){[].forEach.call(m.addedNodes,fix)})}).observe(document.documentElement,{childList:true,subtree:true});fix(document.body);
 }catch(e){}})();
+
+/* ===== Lu-Ks: diseño nuevo de la app, ahora también en la web =====
+   Solo en el navegador (dentro de la app del celular estas pantallas las dibuja la app).
+   - Inicio oscuro: saldo grande que cuenta, botones rápidos, barra de gastos por categoría y hoja clara que sube.
+   - Barra de abajo flotante (píldora) con resaltado que se desliza y botón + aparte.
+   - "Mis cuentas": carrusel 3D de tarjetas (cilindro) con portadas, saldo, entró/salió, información y movimientos.
+   - Formulario de cuenta con la tarjeta llenándose en vivo, portada (recortar 8:5) y animación "Agregando tu cuenta".
+   - Bienvenida animada (sin sesión) y salida de la pantalla de carga con zoom. */
+(function(){try{
+if(window.ReactNativeWebView||/LuKsApp/.test(navigator.userAgent||"")||window.LKNV_OFF)return; // LKNV_OFF: solo para pruebas viejas del diseño clásico
+var R=document.documentElement;R.classList.add("nv");
+var Lx=function(es,en){try{return window.L?L(es,en):(window.LKLANG==="en"?en:es)}catch(e){return es}};
+var E=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
+var $1=function(s,r){return(r||document).querySelector(s)},$all=function(s,r){return[].slice.call((r||document).querySelectorAll(s))};
+var reducir=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+var ICO={add:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+ tr:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h12l-3-3M17 17H5l3 3"/></svg>',
+ acc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 15h3"/></svg>',
+ mas:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5.5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="18.5" cy="12" r="1.9"/></svg>',
+ atras:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>'};
+
+/* ---------- colores ---------- */
+var CC={};
+function rgb(c){if(!c)return null;if(CC[c])return CC[c];var d=document.createElement("i");d.style.color=c;d.style.display="none";document.body.appendChild(d);var s=getComputedStyle(d).color;d.remove();var m=s.match(/[\d.]+/g);var v=m?[+m[0],+m[1],+m[2]]:null;CC[c]=v;return v}
+function claro(c){var v=rgb(c)||[0,0,0];return(0.299*v[0]+0.587*v[1]+0.114*v[2])/255>0.62}
+function mezcla(c,o,k){var a=rgb(c)||[0,0,0],b=rgb(o)||[0,0,0];return"rgb("+Math.round(a[0]*k+b[0]*(1-k))+","+Math.round(a[1]*k+b[1]*(1-k))+","+Math.round(a[2]*k+b[2]*(1-k))+")"}
+function alfa(c,x){var a=rgb(c)||[0,0,0];return"rgba("+a[0]+","+a[1]+","+a[2]+","+x+")"}
+function tileBg(a){if(!a)return"";if(a.tipo==="efectivo")return"#C9A227";try{var k=accKey(a),bc=bkCol(k);if(bc)return bc[1];var n=String(k||"?"),h=0;for(var i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))%360;return"hsl("+h+",45%,42%)"}catch(e){return""}}
+function colorCuenta(a,i){if(!a)return"#4A63E7";var n=a.n,p=window.LKPORT&&LKPORT.get(n);if(p&&LKPORT.color(n))return LKPORT.color(n);if(a.tipo==="credito"&&a.color)return a.color;if(a.tipo==="efectivo")return"#C9A227";return tileBg(a)||a.color||(window.PAL?PAL[(i||0)%PAL.length]:"#4A63E7")}
+function tipoN(t){return t==="credito"?Lx("Crédito","Credit"):t==="efectivo"?Lx("Efectivo","Cash"):Lx("Débito","Debit")}
+
+/* ---------- números que cuentan ---------- */
+function contar(el,hasta,desde,dur,pre){if(!el)return;pre=pre||"";if(HIDE||reducir||Math.abs(hasta-desde)<1){el.textContent=pre+mm(Math.abs(hasta));return}var t0=null;function f(t){if(!t0)t0=t;var k=Math.min((t-t0)/dur,1),q=1-Math.pow(1-k,3);if(!document.body.contains(el)||el.__c!==f)return;el.textContent=pre+m(Math.round(desde+(hasta-desde)*q));if(k<1)requestAnimationFrame(f)}el.__c=f;requestAnimationFrame(f)}
+
+/* ---------- resorte simple (como Animated.spring) ---------- */
+function resorte(o){var x=o.desde,v=o.vel||0,k=o.k||170,c=o.c||16,last=null,id=null,listo=false;function paso(t){if(listo)return;if(last==null)last=t;var dt=Math.min((t-last)/1000,0.032);last=t;var n=4;for(var i=0;i<n;i++){var a=-k*(x-o.hasta)-c*v;v+=a*dt/n;x+=v*dt/n}o.cada(x);if(Math.abs(v)<0.002&&Math.abs(x-o.hasta)<0.001){o.cada(o.hasta);listo=true;o.fin&&o.fin();return}id=requestAnimationFrame(paso)}id=requestAnimationFrame(paso);return{parar:function(){listo=true;cancelAnimationFrame(id);return x}}}
+function tiempo(o){var t0=null,id,listo=false;function f(t){if(listo)return;if(t0==null)t0=t+(o.retraso||0);var k=t<t0?0:Math.min((t-t0)/o.dur,1);o.cada((o.ease||function(z){return 1-Math.pow(1-z,3)})(k));if(k<1)id=requestAnimationFrame(f);else{listo=true;o.fin&&o.fin()}}id=requestAnimationFrame(f);return{parar:function(){listo=true;cancelAnimationFrame(id)}}}
+
+/* =====================================================================
+   1) INICIO
+   ===================================================================== */
+var primeraVez=true,ultG=null;
+function gastosHtml(){try{var by=sumBy(mtx()),ks=Object.keys(by).filter(function(k){return by[k]>0}).sort(function(x,y){return by[y]-by[x]}),tot=ks.reduce(function(x,k){return x+by[k]},0);
+ var top=ks.slice(0,6),resto=ks.slice(6).reduce(function(x,k){return x+by[k]},0);
+ var h='<div class="card nv-g"><div class="nv-gh"><div class="grow" style="min-width:0"><b>'+Lx("Gastos","Spending")+'</b><div class="mut nv-gp"></div></div><div class="num nv-gt"'+(HIDE?'':' data-nvc="'+tot+'"')+'>'+mm(tot)+'</div></div>';
+ if(!ks.length)return h+'<div class="mut" style="margin-top:10px">'+Lx("Aún no hay gastos en este período","No spending in this period yet")+'</div></div>';
+ h+='<div class="nv-multi'+(primeraVez?' nv-crece1':ultG!==tot?' nv-crece':'')+'">'+top.map(function(k){var c=CATS[k]||CATS.otro;return'<i style="flex:'+by[k]+';background:'+(c[2]||"var(--ac)")+'"></i>'}).join("")+(resto>0?'<i style="flex:'+resto+';background:var(--mut)"></i>':'')+'</div>';
+ h+='<div class="nv-ley">'+top.map(function(k){var c=CATS[k]||CATS.otro;return'<button data-nvcat="'+E(k)+'"><i style="background:'+(c[2]||"var(--ac)")+'"></i><span class="mut">'+E(c[0])+'</span><b>'+mm(by[k])+'</b></button>'}).join("")+'</div></div>';return h}catch(e){return""}}
+function rapidos(){var b=[["add",Lx("Anotar","Add")],["tr",Lx("Transferir","Transfer")],["acc",Lx("Cuentas","Accounts")],["mas",Lx("Más","More")]];return'<div class="nv-rap">'+b.map(function(x,i){return'<button data-nvq="'+x[0]+'" style="--i:'+i+'"><span>'+ICO[x[0]]+'</span>'+x[1]+'</button>'}).join("")+'</div>'}
+function armarInicio(){var app=$1("#app");if(!app||tab!=="home"||!$1(":scope > .hd",app)){R.classList.remove("nv-home");return}
+ R.classList.add("nv-home");
+ var kids=[].slice.call(app.children),hero=$1(":scope > .hero",app),b=hero?kids.indexOf(hero):-1;
+ if(b<0)kids.forEach(function(k,i){if(k.querySelector&&k.querySelector("#peropen"))b=i});
+ if(b<0)kids.forEach(function(k,i){if(k.classList.contains("seg"))b=i});
+ if(b<0)return;
+ var top=document.createElement("div");top.className="nv-top";var hoja=document.createElement("div");hoja.className="nv-hoja";
+ for(var i=0;i<=b;i++)top.appendChild(kids[i]);
+ top.insertAdjacentHTML("beforeend",rapidos());
+ hoja.innerHTML='<div class="nv-agarre"></div>'+(HV==="fin"?gastosHtml():"");
+ for(i=b+1;i<kids.length;i++)hoja.appendChild(kids[i]);
+ app.appendChild(top);app.appendChild(hoja);
+ var lab=$1(".pnav",top),gp=$1(".nv-gp",hoja);if(gp){var t=lab&&lab.nextElementSibling;gp.textContent=t?t.textContent:(($1("#peropen",top)||{}).textContent||"").replace(/⌄/g,"").trim()}
+ var gt=$1("[data-nvc]",hoja);if(gt){var gv=+gt.dataset.nvc;if(ultG===null)contar(gt,gv,0,900);else if(ultG!==gv)contar(gt,gv,ultG,500);ultG=gv}
+ if(primeraVez&&!reducir){app.classList.add("nv-ent");setTimeout(function(){app.classList.remove("nv-ent")},1200)}
+ primeraVez=false}
+/* ---------- barra de abajo ---------- */
+function armarBarra(){var d=$1("body > nav > div");if(!d)return;var on=$1(".nv-on",d);if(!on){on=document.createElement("span");on.className="nv-on";d.insertBefore(on,d.firstChild)}
+ var t=$1('.tab[aria-current="page"]',d);if(!t){on.style.opacity=0;return}on.style.opacity=1;var x=t.offsetLeft,w=t.offsetWidth;if(on.__x==null)on.style.transition="none";on.style.transform="translateX("+x+"px)";on.style.width=w+"px";if(on.__x==null){void on.offsetWidth;on.style.transition=""}on.__x=x}
+var _r=window.render;window.render=render=function(){var r=_r.apply(this,arguments);try{armarInicio()}catch(e){}try{armarBarra()}catch(e){}return r};
+window.addEventListener("resize",function(){try{armarBarra()}catch(e){}});
+setTimeout(function(){try{armarBarra()}catch(e){}},300);
+document.addEventListener("click",function(e){var q=e.target.closest&&e.target.closest("[data-nvq]");if(q){e.preventDefault();e.stopPropagation();var k=q.dataset.nvq;
+  if(k==="add")$1("#add").click();
+  else if(k==="tr"){$1("#add").click();setTimeout(function(){try{TP="tr";syncTp()}catch(x){}},30)}
+  else if(k==="acc")abrirCuentas(0);
+  else{var n=$1("#navopen");n&&n.click()}return}
+ var c=e.target.closest&&e.target.closest("[data-nvcat]");if(c){e.stopPropagation();FL={tipo:"out",cat:c.dataset.nvcat,acc:""};Q="";tab="tx";SUB="";render();window.scrollTo(0,0);return}
+ // Tocar una cuenta del Inicio abre el carrusel en esa cuenta (como en la app)
+ var a=e.target.closest&&e.target.closest("#app .acct[data-a]");if(a&&tab==="home"){e.stopPropagation();e.preventDefault();abrirCuentas(+a.dataset.a)}},true);
+
+/* =====================================================================
+   2) TARJETA "DE PLÁSTICO"
+   ===================================================================== */
+function redLogo(red,tinta){if(!red||red==="Otra")return"";if(red==="Mastercard")return'<span class="nv-mc"><i></i><i></i></span>';return'<span class="nv-red'+(red==="Visa"?" v":"")+'" style="color:'+tinta+'">'+E(red==="Visa"?"VISA":red==="Amex"?"AMEX":red)+'</span>'}
+function plastico(o){var w=o.w,h=o.h,r=Math.round(Math.min(w,h)*0.11);
+ if(o.portada){var im=o.vertical?'<img src="'+o.portada+'" alt="" style="position:absolute;width:'+h+'px;height:'+w+'px;left:'+(w-h)/2+'px;top:'+(h-w)/2+'px;transform:rotate(90deg);object-fit:cover">':'<img src="'+o.portada+'" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">';
+  return'<div class="nv-pl nv-port" style="width:'+w+'px;height:'+h+'px;border-radius:'+r+'px">'+im+'</div>'}
+ var base=o.color||"#4A63E7",cl=claro(base),tinta=cl?"#1C1C1E":"#FFFFFF",suave=cl?"rgba(28,28,30,.62)":"rgba(255,255,255,.78)",pad=Math.round(Math.min(w,h)*0.085);
+ var bg="linear-gradient(135deg,"+mezcla(base,"#fff",.88)+" 0%,"+base+" 45%,"+mezcla(base,"#000",.62)+" 100%)";
+ var abajo=o.abajo?'<div class="nv-pl-m" style="color:'+tinta+'">'+E(o.abajo)+'</div>':"";
+ var pie=o.vertical?'<div class="nv-fila">'+(redLogo(o.red,tinta)||"<span></span>")+'<span style="color:'+suave+';font-weight:600;font-size:13px">'+E(o.tipoN)+'</span></div>':'<div class="nv-fila"><span style="color:'+suave+';font-weight:600;font-size:13px">'+E(o.tipoN)+'</span>'+redLogo(o.red,tinta)+'</div>';
+ return'<div class="nv-pl" style="width:'+w+'px;height:'+h+'px;border-radius:'+r+'px;padding:'+pad+'px;background:'+bg+'"><i class="nv-brillo" style="top:'+(o.vertical?h*.18:-h*.2)+'px"></i>'+
+  '<div class="nv-fila nv-pl-t">'+(o.tile||"")+'<div style="min-width:0;flex:1"><div class="nv-pl-n" style="color:'+tinta+'">'+E(o.titulo)+'</div>'+(o.sub?'<div class="nv-pl-s" style="color:'+suave+'">'+E(o.sub)+'</div>':'')+'</div></div>'+
+  (o.vertical?'<div class="nv-lu" style="color:'+alfa(tinta,.16)+';font-size:'+Math.round(w*.34)+'px">Lu</div>':'<div class="nv-chipT" style="border-color:'+alfa(tinta,.25)+';background:'+(cl?"rgba(255,255,255,.35)":"rgba(255,255,255,.22)")+'"></div>')+
+  '<div>'+abajo+pie+'</div></div>'}
+
+/* =====================================================================
+   3) MIS CUENTAS (carrusel 3D)
+   ===================================================================== */
+var CU=null;
+function datosCuenta(i){var a=ACC[i];if(!a)return null;var n=a.n,b=bal(n),mk=(function(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)})(),entra=0,sale=0;
+ var lst=tx.filter(function(t){return t.acc===n||(t.tipo==="tr"&&t.dst===n)}).sort(function(x,y){return y.date<x.date?-1:y.date>x.date?1:y.id-x.id});
+ lst.forEach(function(t){if(t.date.slice(0,7)!==mk)return;if((t.tipo==="in"&&t.acc===n)||(t.tipo==="tr"&&t.dst===n))entra+=t.amt;else if(t.acc===n)sale+=t.amt});
+ var o={i:i,a:a,n:n,lst:lst,entra:entra,sale:sale,credito:a.tipo==="credito"};
+ if(o.credito){var u=a.ini-b,cupo=+a.cupo||0;o.usado=Math.max(u,0);o.cupo=cupo;o.disp=Math.max(cupo-u,0);o.pct=cupo?Math.max(0,Math.min(100,u/cupo*100)):0}else{o.saldo=a.ini+b}
+ return o}
+function abrirCuentas(at){cerrarCuentas(true);var W=Math.min(window.innerWidth,520),HP=window.innerHeight,CH=Math.min(Math.round(HP*.46),430),CW=Math.round(CH/1.586),P=Math.round(W/2+CW*.42-10);
+ var n=ACC.length,pags=n+1;at=Math.max(0,Math.min(at||0,pags-1));
+ var el=document.createElement("div");el.id="nv-cu";el.setAttribute("role","dialog");el.setAttribute("aria-label",Lx("Mis cuentas","My accounts"));
+ el.innerHTML='<div class="nv-cu-fondo"></div><div class="nv-cu-sc"><div class="nv-cu-in"><div class="nv-fila nv-cu-hd"><button class="nv-circ" data-cu="x" aria-label="'+Lx("Atrás","Back")+'">'+ICO.atras+'</button><b>'+Lx("Mis cuentas","My accounts")+'</b><button class="nv-circ ac" data-cu="add" aria-label="'+Lx("Agregar cuenta","Add account")+'">'+ICO.add+'</button></div>'+
+  '<div class="nv-car" style="height:'+(CH+44)+'px"><div class="nv-car-in" style="top:22px;height:'+CH+'px"></div></div><div class="nv-dots"></div><div class="nv-cu-info"></div></div></div>';
+ document.body.appendChild(el);R.classList.add("nv-cu-on");
+ var car=$1(".nv-car-in",el),cartas=[];
+ for(var i=0;i<pags;i++){var c=document.createElement("div");c.className="nv-carta";c.style.cssText="width:"+CW+"px;height:"+CH+"px;left:calc(50% - "+CW/2+"px)";
+  if(i<n){c.innerHTML=cartaHtml(i,CW,CH);c.__h=c.innerHTML;c.dataset.i=i}
+  else{c.innerHTML='<button class="nv-nueva" data-cu="add"><span class="nv-mas">'+ICO.add+'</span><b>'+Lx("Agregar cuenta","Add account")+'</b><span class="mut">'+Lx("Débito, tarjeta de crédito o efectivo","Debit, credit card or cash")+'</span></button>';c.dataset.add=1}
+  car.appendChild(c);cartas.push(c)}
+ CU={el:el,cartas:cartas,P:P,CW:CW,CH:CH,W:W,pags:pags,pos:at,idx:-1,at:at,abre:0,vec:0,anim:null,arr:0,vez:(CU&&CU.vez||0)+1,ult:{}};
+ var dots=$1(".nv-dots",el);dots.innerHTML=cartas.map(function(_,i){return'<button data-dot="'+i+'" aria-label="'+(i+1)+'"></button>'}).join("");
+ pintar();
+ // Entrada: la del centro llega pequeña y acostada y se endereza con rebote; las vecinas aparecen después
+ var fondo=$1(".nv-cu-fondo",el);el.style.opacity=0;
+ if(reducir){el.style.opacity=1;CU.abre=1;CU.vec=1;pintar()}else{
+  tiempo({dur:260,ease:function(z){return z*(2-z)},cada:function(v){el.style.opacity=v}});
+  resorte({desde:0,hasta:1,k:170,c:16,cada:function(v){if(!CU)return;CU.abre=v;pintar()}});
+  tiempo({dur:420,retraso:380,cada:function(v){if(!CU)return;CU.vec=v;pintar()}})}
+ // Gestos
+ var ini=0,x0=0,y0=0,dir=0,hist=[],arrastrando=false;
+ var zona=$1(".nv-car",el);
+ zona.addEventListener("pointerdown",function(e){if(e.button>0)return;x0=e.clientX;y0=e.clientY;dir=0;hist=[[e.timeStamp,e.clientX]];arrastrando=true;if(CU.anim){CU.pos=CU.anim.parar();CU.anim=null}ini=CU.pos});
+ window.addEventListener("pointermove",mover,{passive:false});window.addEventListener("pointerup",soltar);window.addEventListener("pointercancel",soltar);
+ function mover(e){if(!arrastrando||!CU)return;var dx=e.clientX-x0,dy=e.clientY-y0;if(!dir){if(Math.abs(dx)>8&&Math.abs(dx)>Math.abs(dy)*1.2)dir=1;else if(Math.abs(dy)>10){dir=-1;arrastrando=false;return}else return}
+  e.preventDefault();CU.arr=Date.now();hist.push([e.timeStamp,e.clientX]);if(hist.length>6)hist.shift();var v=ini-dx/CU.P,max=CU.pags-1;if(v<0)v*=.3;if(v>max)v=max+(v-max)*.3;CU.pos=v;pintar()}
+ function soltar(e){if(!arrastrando||!CU){arrastrando=false;return}arrastrando=false;if(dir!==1)return;CU.arr=Date.now();var vx=0;if(hist.length>1){var a=hist[0],b=hist[hist.length-1];vx=(b[1]-a[1])/Math.max(b[0]-a[0],1)}vx=Math.max(-2,Math.min(2,vx));
+  var av=CU.pos-ini,k=Math.round(ini+av-vx*.25);if(k===Math.round(ini)&&Math.abs(av)>.18)k=Math.round(ini)+(av>0?1:-1);ir(k)}
+ CU.quitar=function(){window.removeEventListener("pointermove",mover);window.removeEventListener("pointerup",soltar);window.removeEventListener("pointercancel",soltar)};
+ el.addEventListener("click",function(e){var b=e.target.closest("[data-cu],[data-dot],.nv-carta,[data-cuv],[data-cue]");if(!b)return;
+  if(b.dataset.dot!=null){ir(+b.dataset.dot,true);return}
+  if(b.dataset.cuv!=null){var nn=ACC[+b.dataset.cuv]&&ACC[+b.dataset.cuv].n;cerrarCuentas(false,function(){FL={tipo:"",cat:"",acc:nn};Q="";tab="tx";SUB="";render();window.scrollTo(0,0)});return}
+  if(b.dataset.cue!=null){abrirForm(+b.dataset.cue);return}
+  if(b.dataset.cu==="x"){cerrarCuentas();return}
+  if(b.dataset.cu==="add"){if(Date.now()-CU.arr<400)return;abrirForm(-1);return}
+  if(b.classList.contains("nv-carta")&&b.dataset.i!=null){if(Date.now()-CU.arr<400)return;var j=+b.dataset.i;if(j!==CU.idx)ir(j,true)}});
+ el.addEventListener("keydown",function(e){if(e.key==="Escape")cerrarCuentas();if(e.key==="ArrowRight")ir(Math.round(CU.pos)+1,true);if(e.key==="ArrowLeft")ir(Math.round(CU.pos)-1,true)});
+ setTimeout(function(){var b=$1('[data-cu="x"]',el);b&&b.focus({preventScroll:true})},50)}
+function cartaHtml(i,CW,CH){var a=ACC[i],p=window.LKPORT?LKPORT.get(a.n):"";return plastico({w:CW,h:CH,vertical:true,color:colorCuenta(a,i),tile:accIco(a,34),titulo:a.apodo||a.n,sub:a.banco&&a.banco!==(a.apodo||a.n)?a.banco:"",red:a.red,tipoN:tipoN(a.tipo),portada:p})+'<i class="nv-sombra" style="border-radius:'+Math.round(CW*.11)+'px"></i>'}
+// Si cambió una cuenta o su portada, redibujar solo esa tarjeta
+function rehacerCartas(){if(!CU)return;CU.cartas.forEach(function(c,i){if(i>=ACC.length)return;var h=cartaHtml(i,CU.CW,CU.CH);if(h!==c.__h){c.innerHTML=h;c.__h=h}})}
+window.__lkPortadas=function(){try{rehacerCartas();if(CU){CU.idx=-1;CU.ult.vez=CU.vez;pintar()}}catch(e){}};
+function ir(i,rapido){if(!CU)return;var k=Math.max(0,Math.min(CU.pags-1,i));if(CU.anim)CU.pos=CU.anim.parar();CU.anim=resorte({desde:CU.pos,hasta:k,k:rapido?260:170,c:rapido?26:20,cada:function(v){if(!CU)return;CU.pos=v;pintar()},fin:function(){if(CU)CU.anim=null}})}
+function trozo(o,vals){var s=o<0?-1:1,a=Math.abs(o);if(a<=1)return s*vals[0]*a;if(a<=2)return s*(vals[0]+(vals[1]-vals[0])*(a-1));return s*vals[1]}
+function pintar(){if(!CU)return;var pos=CU.pos,W=CU.W,CH=CU.CH;
+ CU.cartas.forEach(function(c,i){var o=i-pos,a=Math.abs(o),mx=o*CU.P,giro=trozo(o,[30,42]),esc=1-Math.min(a,1)*.07-Math.max(Math.min(a,2)-1,0)*.07,som=Math.min(a,1)*.25+Math.max(Math.min(a,2)-1,0)*.15;
+  var d=i-CU.at,ad=Math.abs(d),ab=CU.abre,ve=CU.vec,ex,ey=0,ro=0,cr=1,op;
+  if(ad===0){ex=-W*.16*(1-ab);ey=-CH*.1*(1-ab);ro=-72*(1-ab);cr=.5+.5*ab;op=1}else{ex=d*W*.35*(1-ve);op=ve}
+  c.style.transform="translateX("+ex+"px) translateY("+ey+"px) rotate("+ro+"deg) scale("+cr+") perspective(900px) translateX("+mx+"px) rotateY("+giro+"deg) scale("+esc+")";
+  c.style.opacity=op;c.style.zIndex=100-Math.round(a*2);var sh=c.querySelector(".nv-sombra");if(sh)sh.style.opacity=som;
+  c.style.visibility=a>2.6?"hidden":"visible"});
+ var idx=Math.max(0,Math.min(CU.pags-1,Math.round(pos)));if(idx!==CU.idx){CU.idx=idx;info()}}
+function info(){if(!CU)return;var el=CU.el,i=CU.idx,o=i<ACC.length?datosCuenta(i):null;
+ $all("[data-dot]",el).forEach(function(d,j){d.classList.toggle("on",j===i)});
+ var fondo=$1(".nv-cu-fondo",el),col=o?colorCuenta(o.a,i):"var(--ac)",dk=R.getAttribute("data-theme")==="dark"||(R.getAttribute("data-theme")!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches);
+ fondo.style.background="linear-gradient(180deg,"+alfa(o?col:"#4A63E7",dk?.55:.35)+" 0%,"+alfa(o?col:"#4A63E7",dk?.22:.14)+" 55%,"+alfa(o?col:"#4A63E7",0)+" 100%)";fondo.style.height=(CU.CH+260)+"px";
+ var box=$1(".nv-cu-info",el);
+ if(!o){box.innerHTML='<div class="nv-cu-nueva"><div class="nv-big">'+Lx("Nueva cuenta","New account")+'</div><div class="mut">'+Lx("Débito, tarjeta de crédito o efectivo","Debit, credit card or cash")+'</div><button class="nv-btn ac" data-cu="add">'+Lx("Agregar cuenta","Add account")+'</button></div>';return}
+ var mes=new Date().toLocaleDateString(window.LKLANG==="en"?"en-US":"es-CO",{month:"long",year:"numeric"});mes=mes.charAt(0).toUpperCase()+mes.slice(1);
+ var v=o.credito?o.usado:o.saldo,neg=!o.credito&&o.saldo<0;
+ var h='<div class="nv-cu-sal"><div class="mut">'+(o.credito?Lx("Usado","Used"):Lx("Saldo","Balance"))+'</div><div class="nv-cu-v num'+(neg?" neg":"")+'">'+(neg&&!HIDE?"−":"")+mm(Math.abs(v))+'</div>';
+ if(o.credito)h+='<div class="bar nv-cu-bar"><i style="width:'+o.pct+'%;background:'+(o.pct>=90?"var(--neg)":col)+'"></i></div><div class="mut" style="font-size:13px;margin-top:6px">'+Lx("Disponible","Available")+' '+mm(o.disp)+' · '+Lx("Cupo","Limit")+' '+mm(o.cupo)+'</div>';
+ h+='</div><div class="nv-fila nv-duo"><div class="card"><div class="mut">'+Lx("Entró","In")+' · '+E(mes)+'</div><div class="num pos">'+mm(o.entra)+'</div></div><div class="card"><div class="mut">'+Lx("Salió","Out")+' · '+E(mes)+'</div><div class="num">'+mm(o.sale)+'</div></div></div>';
+ var filas=[[Lx("Tipo","Type"),tipoN(o.a.tipo)]];if(o.a.banco)filas.push([Lx("Banco","Bank"),o.a.banco]);if(o.credito&&o.a.corte)filas.push([Lx("Día de corte","Statement day"),o.a.corte]);if(o.credito&&o.a.pago)filas.push([Lx("Día de pago","Due day"),o.a.pago]);if(o.a.pri)filas.push([Lx("Cuenta principal","Main account"),"★"]);
+ h+='<div class="nv-tit">'+Lx("Información","Details")+'</div><div class="card nv-inf">'+filas.map(function(f){return'<div class="nv-fila"><span class="mut">'+E(f[0])+'</span><b>'+E(f[1])+'</b></div>'}).join("")+'</div>';
+ h+='<div class="nv-fila nv-duo"><button class="nv-btn" data-cuv="'+i+'">'+Lx("Ver en Movimientos","View in Transactions")+'</button><button class="nv-btn" data-cue="'+i+'">'+Lx("Editar cuenta","Edit account")+'</button></div>';
+ h+='<div class="nv-tit">'+Lx("Movimientos","Transactions")+'</div>'+(o.lst.length?'<div class="card nv-movs">'+o.lst.slice(0,25).map(function(t){try{return rowH(t)}catch(e){return""}}).join("")+'</div>':'<div class="mut">'+Lx("Sin movimientos todavía","No transactions yet")+'</div>');
+ box.innerHTML=h;
+ var ve=$1(".nv-cu-v",box),pre=neg?"−":"",desde=CU.ult.v==null?0:CU.ult.v;if(CU.ult.v==null||CU.ult.vez!==CU.vez)contar(ve,Math.abs(v),0,1100,pre);else contar(ve,Math.abs(v),Math.abs(desde),450,pre);CU.ult={v:v,vez:CU.vez}}
+function cerrarCuentas(ya,luego){if(!CU){luego&&luego();return}var c=CU;CU=null;c.quitar&&c.quitar();if(c.anim)c.anim.parar();R.classList.remove("nv-cu-on");
+ if(ya||reducir){c.el.remove();luego&&luego();return}tiempo({dur:180,ease:function(z){return z*z},cada:function(v){c.el.style.opacity=1-v},fin:function(){c.el.remove();luego&&luego()}})}
+window.LKNV={abrirCuentas:abrirCuentas,cerrarCuentas:cerrarCuentas,abrirForm:function(i){abrirForm(i)}};
+// Al cambiar los datos (sincronización, editar un movimiento), refrescar la información abierta
+var _r2=window.render;window.render=render=function(){var r=_r2.apply(this,arguments);if(CU&&CU.pags!==ACC.length+1){var at=CU.idx;cerrarCuentas(true);abrirCuentas(at)}else if(CU){rehacerCartas();CU.idx=-1;CU.ult.vez=CU.vez;pintar()}return r};
+
+/* =====================================================================
+   4) FORMULARIO DE CUENTA
+   ===================================================================== */
+var FX=null;
+var solo=function(s){return String(s==null?"":s).replace(/\D/g,"")};
+var miles=function(s){var d=solo(s);return d?"$ "+d.replace(/\B(?=(\d{3})+(?!\d))/g,"."):""};
+function tilePropio(n){return bkTile(n,30)}
+function abrirForm(i){var a=i>=0?ACC[i]:null;
+ var f=a?{tipo:a.tipo==="banco"?"debito":a.tipo,banco:a.banco||"",apodo:a.apodo||"",name:a.n,color:a.color||CLR[0],ini:a.ini||"",cupo:a.cupo?String(a.cupo):"",red:a.red||"",corte:a.corte||"",pago:a.pago||"",rec:!!a.rec,pri:!!a.pri,act:""}:(function(){var x=afNew();x.act="";return x})();
+ var hoy="";if(a){var bA=bal(a.n),hh=a.tipo==="credito"?a.ini-bA:a.ini+bA;hoy=(hh<0?"−":"")+m(Math.abs(hh))}
+ cerrarForm(true);var el=document.createElement("div");el.id="nv-af";el.setAttribute("role","dialog");document.body.appendChild(el);
+ FX={el:el,i:a?i:-1,f:f,hoy:hoy,portada:a&&window.LKPORT?LKPORT.get(a.n):"",cambio:false,pag:"main",q:"",avanz:false,err:"",fase:"form",giro:0};
+ formHtml();void el.offsetWidth;requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.add("on")})})}
+function cerrarForm(ya){if(!FX)return;var el=FX.el;FX=null;if(ya){el.remove();return}el.classList.remove("on");setTimeout(function(){el.remove()},300)}
+function previa(PW){var f=FX.f,cr=f.tipo==="credito",ef=f.tipo==="efectivo",PH=Math.round(PW/1.586);
+ var color=cr?f.color:ef?"#C9A227":(f.banco?tileBg({banco:f.banco,n:f.banco}):"")||"#4A63E7";
+ var nom=(f.apodo||"").trim()||(f.banco||"").trim()||(ef?Lx("Efectivo","Cash"):Lx("Tu cuenta","Your account"));
+ var monto=cr?(f.cupo?miles(f.cupo):"$ 0"):f.act?miles(f.act):(FX.i>=0&&FX.hoy?FX.hoy:"$ 0");
+ var tile=ef?accIco({tipo:"efectivo"},34):f.banco?bkTile(f.banco,34):"";
+ return{color:color,nom:nom,PH:PH,html:plastico({w:PW,h:PH,color:color,tile:tile,titulo:nom,sub:f.banco&&!ef&&f.apodo?f.banco:"",red:cr?f.red:"",tipoN:tipoN(f.tipo),abajo:monto,portada:FX.portada})}}
+function formHtml(){if(!FX)return;var el=FX.el,f=FX.f,cr=f.tipo==="credito",ef=f.tipo==="efectivo",ed=FX.i>=0,PW=Math.min(window.innerWidth,520)-40;
+ if(FX.pag==="bank"){var q=FX.q.trim(),l=BANKS.concat(["Otro banco"]).filter(function(n){return!q||n.toLowerCase().indexOf(q.toLowerCase())>=0});
+  el.innerHTML='<div class="nv-af-c"><div class="nv-af-hd"><button class="lnk" data-af="volver">‹ '+Lx("Banco","Bank")+'</button></div><div style="padding:16px"><input class="nv-in" id="nv-bq" placeholder="'+Lx("Buscar banco…","Search bank…")+'" value="'+E(FX.q)+'" autocomplete="off"></div><div class="nv-af-sc" style="padding:0 16px 30px" id="nv-bl"></div></div>';
+  pintarBancos();var inp=$1("#nv-bq",el);inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length);return}
+ var pv=previa(PW);
+ var h='<div class="nv-af-c"><div class="nv-af-hd"><button class="lnk" data-af="x">'+Lx("Cancelar","Cancel")+'</button><b>'+(ed?Lx("Editar cuenta","Edit account"):Lx("Nueva cuenta","New account"))+'</b><span style="width:60px"></span></div><div class="nv-af-sc"><div class="nv-af-in">';
+ h+='<div class="nv-voltea'+(FX.giro?" atras":"")+'" style="height:'+pv.PH+'px"><div class="nv-cara">'+pv.html+'</div><div class="nv-cara nv-dorso" style="border-radius:'+Math.round(pv.PH*.11)+'px;background:linear-gradient(180deg,'+mezcla(pv.color,"#000",.75)+','+mezcla(pv.color,"#000",.45)+')"><i style="height:'+pv.PH*.2+'px;margin-top:'+pv.PH*.14+'px"></i><div class="nv-fila"><div><span>'+Lx("Día de corte","Statement day")+'</span><b>'+(solo(f.corte)||"—")+'</b></div><div><span>'+Lx("Día de pago","Due day")+'</span><b>'+(solo(f.pago)||"—")+'</b></div></div></div></div>';
+ h+='<div class="nv-seg">'+[["debito","🐷"],["credito","💳"],["efectivo","💵"]].map(function(t){return'<button data-aft="'+t[0]+'"'+(f.tipo===t[0]?' class="on"':'')+'>'+t[1]+' '+tipoN(t[0])+'</button>'}).join("")+'</div>';
+ h+='<div class="nv-fila nv-sw"><div style="flex:1"><div>'+Lx("Portada de la tarjeta","Card cover")+'</div><div class="mut" style="font-size:12px;margin-top:2px;line-height:1.35">'+Lx("Usa una captura de tu tarjeta en Wallet o una foto; podrás recortarla.","Use a screenshot of your card in Wallet or a photo; you can crop it.")+'</div></div>'+(FX.portada?'<button class="lnk neg" data-af="quitar">'+Lx("Quitar","Remove")+'</button>':'')+'<button class="nv-chip ac" data-af="foto">'+Lx("Elegir foto","Choose photo")+'</button></div>';
+ if(!ef)h+='<label class="nv-lb">'+Lx("Banco","Bank")+'</label><button class="nv-in nv-fila" data-af="banco" style="gap:10px">'+(f.banco?bkTile(f.banco,30):'<span style="font-size:20px">🏦</span>')+'<span style="flex:1;text-align:left'+(f.banco?'':';color:var(--mut)')+'">'+E(f.banco||Lx("Elige tu banco","Choose your bank"))+'</span><span class="mut">⌄</span></button>';
+ h+=campo(ef?Lx("Nombre","Name"):Lx("Apodo (opcional)","Nickname (optional)"),"apodo",f.apodo,ef?Lx("Ej. Billetera","E.g. Wallet"):Lx("Ej: Visa Oro, Nómina","E.g. Gold Visa, Payroll"));
+ if(cr){h+='<label class="nv-lb">'+Lx("Red","Network")+'</label><div class="nv-fila" style="flex-wrap:wrap;gap:8px">'+["Visa","Mastercard","Amex","Diners Club","Otra"].map(function(r){return'<button class="nv-chip'+(f.red===r?" ac":"")+'" data-afr="'+r+'">'+r+'</button>'}).join("")+'</div>';
+  h+='<label class="nv-lb">'+Lx("Color de la tarjeta","Card color")+'</label><div class="nv-fila" style="flex-wrap:wrap;gap:10px">'+CLR.map(function(c){return'<button class="nv-dot'+(f.color===c?" on":"")+'" data-afc="'+c+'" style="background:'+c+';color:'+(claro(c)?"#000":"#fff")+'" aria-label="'+c+'">'+(f.color===c?"✓":"")+'</button>'}).join("")+'</div>';
+  h+=campo(Lx("Cupo total","Credit limit"),"cupo",miles(f.cupo),"$ 0",1);
+  h+='<div class="nv-fila" style="gap:10px"><div style="flex:1">'+campo(Lx("Día de corte","Statement day"),"corte",solo(f.corte),"1-31",1,1)+'</div><div style="flex:1">'+campo(Lx("Día de pago","Due day"),"pago",solo(f.pago),"1-31",1,1)+'</div></div>';
+  h+='<div class="nv-fila nv-sw"><span style="flex:1">'+Lx("Recordatorio de pago","Payment reminder")+'</span>'+tg("rec",!!f.rec).replace('data-tg=','data-aftg=')+'</div>'}
+ h+=campo(cr?Lx("Deuda actual (hoy)","Current debt (today)"):Lx("Saldo actual (hoy)","Current balance (today)"),"act",miles(f.act),ed&&FX.hoy?FX.hoy:"$ 0",1);
+ h+='<div class="mut nv-ayuda">'+(ed&&FX.hoy?Lx("Hoy la app calcula","Today the app calculates")+' '+FX.hoy+'. ':'')+(cr?Lx("Escribe cuánto debes hoy según tu banco.","Enter what you owe today according to your bank."):Lx("Escribe cuánto tienes hoy y la app ajusta el resto con tus movimientos.","Enter what you have today and the app adjusts the rest with your transactions."))+'</div>';
+ h+='<div class="nv-fila nv-sw"><span style="flex:1">'+Lx("Cuenta principal","Main account")+'</span>'+tg("pri",!!f.pri).replace('data-tg=','data-aftg=')+'</div>';
+ h+='<button class="lnk" data-af="avanz" style="margin-top:16px;font-weight:600">'+(FX.avanz?"⌄ ":"› ")+Lx("Opciones avanzadas","Advanced options")+'</button>';
+ if(FX.avanz)h+=campo(Lx("Nombre en tus movimientos","Name in your transactions"),"name",f.name,pv.nom)+'<div class="mut nv-ayuda">'+Lx("Debe ser igual al nombre de la tarjeta en tus movimientos. Si lo dejas vacío, usa el apodo o el banco.","Must match the card name in your transactions. If empty, the nickname or bank is used.")+'</div>';
+ h+='<div class="nv-err" id="nv-err">'+E(FX.err)+'</div>';
+ h+='<button class="nv-btn grande ink" data-af="guardar">'+(ed?Lx("Guardar cambios","Save changes"):Lx("Agregar cuenta","Add account"))+'</button>';
+ if(ed)h+='<button class="nv-btn grande" data-af="borrar" style="color:var(--neg);margin-top:10px">'+(FX.borrar?Lx("Toca otra vez para eliminar","Tap again to delete"):Lx("Eliminar cuenta","Delete account"))+'</button>';
+ h+='</div></div></div>';
+ var sc=$1(".nv-af-sc",el),top=sc?sc.scrollTop:0;el.innerHTML=h;var sc2=$1(".nv-af-sc",el);if(sc2)sc2.scrollTop=top}
+function campo(lb,k,v,ph,num,corto){return'<label class="nv-lb" for="nv-f-'+k+'">'+lb+'</label><input class="nv-in" id="nv-f-'+k+'" data-aff="'+k+'" value="'+E(v)+'" placeholder="'+E(ph||"")+'"'+(num?' inputmode="numeric"':'')+(corto?' maxlength="2"':'')+' autocomplete="off">'}
+function pintarBancos(){if(!FX)return;var q=FX.q.trim(),ql=q.toLowerCase(),l=BANKS.concat(["Otro banco"]).filter(function(n){return!ql||n.toLowerCase().indexOf(ql)>=0}),bl=$1("#nv-bl",FX.el);if(!bl)return;
+ var h="";if(q&&!BANKS.concat(["Otro banco"]).some(function(n){return n.toLowerCase()===ql}))h+='<button class="nv-fila nv-bk" data-afb="'+E(q)+'">'+bkTile(q,40)+'<span style="flex:1;text-align:left"><b>'+Lx("Usar","Use")+' «'+E(q)+'»</b><br><span class="mut" style="font-size:13px">'+Lx("¿No está en la lista? Agrégalo con este nombre","Not in the list? Add it with this name")+'</span></span></button>';
+ h+=l.map(function(n){return'<button class="nv-fila nv-bk" data-afb="'+E(n)+'">'+bkTile(n,40)+'<span style="flex:1;text-align:left">'+E(n)+'</span>'+(FX.f.banco===n?'<span style="color:var(--ac)">✓</span>':'')+'</button>'}).join("");bl.innerHTML=h}
+// Actualizar solo la tarjeta de arriba mientras escribes (sin redibujar todo: el teclado no se cierra)
+function refrescarPrevia(){if(!FX||FX.pag!=="main")return;var v=$1(".nv-voltea",FX.el);if(!v)return;var pv=previa(Math.min(window.innerWidth,520)-40);v.firstChild.innerHTML=pv.html;var d=$1(".nv-dorso b",v),bs=$all(".nv-dorso b",v);if(bs[0])bs[0].textContent=solo(FX.f.corte)||"—";if(bs[1])bs[1].textContent=solo(FX.f.pago)||"—"}
+function voltear(atras){if(!FX)return;FX.giro=atras?1:0;var v=$1(".nv-voltea",FX.el);if(v)v.classList.toggle("atras",!!atras)}
+document.addEventListener("input",function(e){if(!FX)return;var t=e.target;if(t.id==="nv-bq"){FX.q=t.value;pintarBancos();return}var k=t.dataset&&t.dataset.aff;if(!k)return;
+ if(k==="cupo"||k==="act"){var d=solo(t.value);FX.f[k]=d;var nv=miles(d);if(t.value!==nv){t.value=nv}}else if(k==="corte"||k==="pago"){FX.f[k]=solo(t.value).slice(0,2);t.value=FX.f[k]}else FX.f[k]=t.value;
+ FX.err="";var er=$1("#nv-err",FX.el);if(er)er.textContent="";refrescarPrevia()});
+document.addEventListener("focusin",function(e){if(!FX)return;var k=e.target.dataset&&e.target.dataset.aff;if(!k)return;voltear(k==="corte"||k==="pago")});
+document.addEventListener("click",function(e){if(!FX||!FX.el.contains(e.target))return;var b=e.target.closest("button");if(!b)return;var f=FX.f,d=b.dataset;
+ if(d.aft){f.tipo=d.aft;if(d.aft==="efectivo")f.banco="";FX.err="";formHtml();return}
+ if(d.afr){f.red=f.red===d.afr?"":d.afr;formHtml();return}
+ if(d.afc){f.color=d.afc;formHtml();return}
+ if(d.aftg){f[d.aftg]=!f[d.aftg];b.setAttribute("aria-pressed",String(!!f[d.aftg]));return}
+ if(d.afb!=null){f.banco=d.afb;FX.pag="main";FX.q="";FX.err="";formHtml();return}
+ var a=d.af;if(!a)return;
+ if(a==="x"){cerrarForm();return}
+ if(a==="volver"){FX.pag="main";formHtml();return}
+ if(a==="banco"){FX.pag="bank";formHtml();return}
+ if(a==="avanz"){FX.avanz=!FX.avanz;formHtml();return}
+ if(a==="quitar"){FX.portada="";FX.cambio=true;formHtml();return}
+ if(a==="foto"){elegirFoto();return}
+ if(a==="guardar"){guardar();return}
+ if(a==="borrar"){if(!FX.borrar){FX.borrar=true;formHtml();return}guardarEnWeb({i:FX.i,del:true,tipo:f.tipo,banco:f.banco,apodo:f.apodo,name:f.name});cerrarForm();return}
+ if(a==="ver"){var i=FX.res&&FX.res.i;cerrarForm();if(i!=null&&i>=0)abrirCuentas(i);return}
+ if(a==="listo"){cerrarForm();return}});
+document.addEventListener("keydown",function(e){if(FX&&e.key==="Escape"){if(FX.pag==="bank"){FX.pag="main";formHtml()}else if(FX.fase==="form")cerrarForm()}else if(FX&&e.key==="Enter"&&e.target.id==="nv-bq"){var q=FX.q.trim();if(q){var ex=BANKS.concat(["Otro banco"]).filter(function(n){return n.toLowerCase()===q.toLowerCase()})[0];FX.f.banco=ex||q;FX.pag="main";FX.q="";formHtml()}}});
+/* ---------- portada: elegir y recortar 8:5 ---------- */
+function elegirFoto(){var inp=document.createElement("input");inp.type="file";inp.accept="image/*";inp.style.display="none";document.body.appendChild(inp);inp.onchange=function(){var fl=inp.files&&inp.files[0];inp.remove();if(!fl)return;var r=new FileReader();r.onload=function(){recortar(r.result)};r.readAsDataURL(fl)};inp.click()}
+function recortar(src){var im=new Image();im.onload=function(){var ov=document.createElement("div");ov.id="nv-crop";var VW=Math.min(window.innerWidth,520)-32,VH=Math.round(VW*5/8);
+ ov.innerHTML='<div class="nv-crop-c"><div class="nv-af-hd"><button class="lnk" data-cr="x">'+Lx("Cancelar","Cancel")+'</button><b>'+Lx("Recortar","Crop")+'</b><button class="lnk" data-cr="ok" style="font-weight:700">'+Lx("Usar","Use")+'</button></div><div class="mut" style="text-align:center;font-size:13px;margin:14px 16px 10px">'+Lx("Mueve la foto y acércala hasta que la tarjeta llene el recuadro.","Move and zoom the photo until the card fills the frame.")+'</div><div class="nv-crop-v" style="width:'+VW+'px;height:'+VH+'px"><img alt=""></div><input type="range" min="1" max="4" step="0.01" value="1" class="nv-zoom" aria-label="Zoom"></div>';
+ document.body.appendChild(ov);var v=$1(".nv-crop-v",ov),img=$1("img",v),z=$1(".nv-zoom",ov);img.src=src;
+ var base=Math.max(VW/im.width,VH/im.height),s=1,x=0,y=0;function lim(){var w=im.width*base*s,h=im.height*base*s;x=Math.min(0,Math.max(VW-w,x));y=Math.min(0,Math.max(VH-h,y));img.style.width=w+"px";img.style.height=h+"px";img.style.transform="translate("+x+"px,"+y+"px)"}
+ x=(VW-im.width*base)/2;y=(VH-im.height*base)/2;lim();
+ z.oninput=function(){var cx=(VW/2-x)/s,cy=(VH/2-y)/s;s=+z.value;x=VW/2-cx*s;y=VH/2-cy*s;lim()};
+ var p=null,pts={};v.addEventListener("pointerdown",function(e){v.setPointerCapture(e.pointerId);pts[e.pointerId]=[e.clientX,e.clientY];p={x:x,y:y,cx:e.clientX,cy:e.clientY,s:s,d:dist()}});
+ function dist(){var k=Object.keys(pts);if(k.length<2)return 0;var a=pts[k[0]],b=pts[k[1]];return Math.hypot(a[0]-b[0],a[1]-b[1])}
+ v.addEventListener("pointermove",function(e){if(!p||!pts[e.pointerId])return;pts[e.pointerId]=[e.clientX,e.clientY];var d=dist();if(d&&p.d){s=Math.max(1,Math.min(4,p.s*d/p.d));z.value=s}else{x=p.x+e.clientX-p.cx;y=p.y+e.clientY-p.cy}lim()});
+ var fin=function(e){delete pts[e.pointerId];p=Object.keys(pts).length?{x:x,y:y,cx:pts[Object.keys(pts)[0]][0],cy:pts[Object.keys(pts)[0]][1],s:s,d:0}:null};v.addEventListener("pointerup",fin);v.addEventListener("pointercancel",fin);
+ ov.addEventListener("click",function(e){var b=e.target.closest("[data-cr]");if(!b)return;if(b.dataset.cr==="ok"&&FX){var c=document.createElement("canvas");c.width=900;c.height=Math.round(900*5/8);var k=im.width*base*s/VW,sx=-x/(base*s),sy=-y/(base*s),sw=VW/(base*s),sh=VH/(base*s);
+  var g=c.getContext("2d");g.drawImage(im,sx,sy,sw,sh,0,0,c.width,c.height);FX.portada=c.toDataURL("image/jpeg",.72);FX.cambio=true;formHtml()}ov.remove()})};
+ im.onerror=function(){toast(Lx("No se pudo abrir la foto","Could not open the photo"))};im.src=src}
+/* ---------- guardar (misma lógica de la web: saveAcc2) ---------- */
+function guardarEnWeb(d){var ultimo="";AE=d.i>=0?+d.i:-1;ADEL=!!d.del;
+ AF={tipo:d.tipo,banco:d.tipo==="efectivo"?"":(d.banco||""),apodo:d.apodo||"",name:d.name||"",color:d.color||CLR[0],ini:d.ini==null?"":d.ini,cupo:d.cupo||"",red:d.red||"",corte:d.corte||"",pago:d.pago||"",rec:!!d.rec,pri:!!d.pri,act:d.act||""};
+ var antes=JSON.stringify(ACC),n0=ACC.length,nViejo=AE>=0&&ACC[AE]?ACC[AE].n:"";var t0=window.toast;window.toast=function(x){ultimo=String(x||"");return t0.apply(this,arguments)};
+ try{saveAcc2(!!d.del)}finally{window.toast=t0}
+ var ok=!ultimo&&(JSON.stringify(ACC)!==antes||AE>=0);
+ if(ok&&window.LKPORT&&!d.del){var nN=(ACC[AE>=0?AE:ACC.length-1]||{}).n;if(nN&&d.portada!==undefined&&(d.portada||(LKPORT.listo&&LKPORT.listo()))){if(nViejo&&nViejo!==nN)LKPORT.set(nViejo,"");LKPORT.set(nN,d.portada||"")}else if(nN&&nViejo&&nViejo!==nN)LKPORT.mover(nViejo,nN)}
+ else if(window.LKPORT&&d.del&&nViejo)LKPORT.set(nViejo,"");
+ return{ok:ok,i:ok&&!d.del?(AE>=0?AE:ACC.length>n0?ACC.length-1:-1):-1,msg:ok?"":(ultimo||Lx("No se pudo guardar. Intenta otra vez.","Could not save. Try again."))}}
+function guardar(){var f=FX.f,cr=f.tipo==="credito",ef=f.tipo==="efectivo",er=function(s){FX.err=s;var e=$1("#nv-err",FX.el);if(e){e.textContent=s;e.scrollIntoView({block:"center",behavior:"smooth"})}};
+ if(document.activeElement)document.activeElement.blur();
+ if(!ef&&!f.banco)return er(Lx("Elige tu banco","Choose your bank"));
+ var nm=(f.name||"").trim()||(f.apodo||"").trim()||(f.banco||"").trim()||(ef?"Efectivo":"");if(!nm)return er(Lx("Escribe un nombre","Enter a name"));
+ if(cr&&!parseInt(solo(f.cupo),10))return er(Lx("Escribe el cupo total","Enter the credit limit"));
+ var d={i:FX.i,tipo:f.tipo,banco:ef?"":f.banco,apodo:(f.apodo||"").trim(),name:(f.name||"").trim(),color:f.color,ini:f.ini,cupo:solo(f.cupo),red:f.red,corte:solo(f.corte),pago:solo(f.pago),rec:!!f.rec,pri:!!f.pri,act:solo(f.act)};if(FX.cambio)d.portada=FX.portada;
+ animarGuardado(function(){return guardarEnWeb(d)})}
+function animarGuardado(hacer){var ed=FX.i>=0,PW=Math.min(window.innerWidth,520)-70,pv=previa(PW),el=FX.el,nom=pv.nom;FX.fase="anim";
+ var ov=document.createElement("div");ov.className="nv-anim";ov.style.background="linear-gradient(180deg,"+mezcla(pv.color,"#0A0E1F",.45)+" 0%,#0A0E1F 55%,#05060C 100%)";
+ ov.innerHTML='<div class="nv-anim-in"><div class="nv-at"><div class="nv-bigT">'+(ed?Lx("Guardando cambios","Saving changes"):Lx("Agregando tu cuenta","Adding your account"))+'</div><div class="nv-bigS">'+Lx("Solo toma un momento","This only takes a moment")+'</div></div><div class="nv-at-card">'+pv.html+'</div>'+
+  '<div class="nv-pasos"><div class="nv-fila" style="justify-content:space-between">'+[Lx("Revisar","Check"),Lx("Guardar","Save"),Lx("Lista","Ready")].map(function(p,i){return'<div class="nv-paso" data-p="'+(i+1)+'"><span>'+(i+1)+'</span><em>'+p+'</em></div>'}).join("")+'</div><div class="nv-prog"><i></i></div><div class="nv-pe">'+Lx("Revisando los datos","Checking details")+'</div></div>'+
+  '<div class="nv-ok"><span class="nv-check">✓</span><div class="nv-bigT" style="text-align:center;margin-top:16px">'+(ed?Lx("¡Cambios guardados!","Changes saved!"):Lx("¡Cuenta agregada!","Account added!"))+'</div><div class="nv-bigS" style="text-align:center">'+E(nom)+' '+Lx("ya aparece en tus cuentas","now shows in your accounts")+'</div></div><div style="flex:1"></div>'+
+  '<div class="nv-okb"><button class="nv-btn grande" data-af="ver" style="background:#fff;color:#0A0E1F">'+Lx("Ver cuenta","View account")+'</button><button class="nv-btn grande" data-af="listo" style="background:rgba(255,255,255,.12);color:#fff;margin-top:10px">'+Lx("Listo","Done")+'</button></div></div>';
+ el.appendChild(ov);var prog=$1(".nv-prog i",ov),pe=$1(".nv-pe",ov),paso=function(n){$all(".nv-paso",ov).forEach(function(p){var k=+p.dataset.p,hecho=n>k||(n===3&&k===3);p.className="nv-paso"+(hecho?" hecho":n===k?" act":"");p.firstChild.textContent=hecho?"✓":k});pe.textContent=n>=3?Lx("Todo listo","All set"):n===2?Lx("Guardando en tu cuenta","Saving to your account"):Lx("Revisando los datos","Checking details")};
+ paso(1);requestAnimationFrame(function(){ov.classList.add("on");prog.style.width="45%"});
+ setTimeout(function(){paso(2);prog.style.width="85%";var r;try{r=hacer()}catch(x){r={ok:false,msg:String(x&&x.message||x)}}
+  setTimeout(function(){if(!FX)return;if(!r.ok){FX.fase="form";FX.err=r.msg;ov.remove();formHtml();var e=$1("#nv-err",FX.el);e&&e.scrollIntoView({block:"center"});return}
+   FX.res=r;paso(3);prog.style.width="100%";setTimeout(function(){if(!FX)return;FX.fase="ok";ov.classList.add("fin")},380)},reducir?0:720)},reducir?0:650)}
+
+/* =====================================================================
+   5) BIENVENIDA (sin sesión) y salida de la pantalla de carga
+   ===================================================================== */
+var BV=null,bvVista=false,bvCerrada=false;
+function landingVisible(){var a=$1("#auth"),h=$1("#auth .ld-h");return!!(a&&a.style.display!=="none"&&h&&h.offsetParent!==null)}
+function bienvenida(){if(BV||bvCerrada)return;var rap=bvVista||reducir;bvVista=true;var el=document.createElement("div");el.id="nv-bv";el.className=rap?"ya":"";
+ el.innerHTML='<div class="nv-bv-barre"></div><div class="nv-bv-ic"><i class="a"></i><i class="b"></i><img src="apple-touch-icon.png" alt="Lu-Ks"></div>'+
+  '<button class="nv-bv-lang">'+Lx("🇺🇸 English","🇨🇴 Español")+'</button>'+
+  '<div class="nv-bv-ab"><span class="nv-bv-badge">✨ '+Lx("Gratis · sin anuncios","Free · no ads")+'</span><div class="nv-bv-h">'+Lx("Tus finanzas,","Your money,")+'<br><span>'+Lx("claras.","made clear.")+'</span></div><div class="nv-bv-s">'+Lx("Anota tus gastos en segundos, cumple tu presupuesto y sal de deudas con un plan. Simple, privada y hecha en Colombia.","Track expenses in seconds, stay on budget and get out of debt with a plan. Simple, private and made in Colombia.")+'</div>'+
+  '<button class="nv-btn grande" data-bv="up" style="background:#fff;color:#0A0E1F;margin-top:26px">'+Lx("Crear mi cuenta gratis","Create my free account")+'</button><button class="nv-btn grande nv-bv-g" data-bv="in">'+Lx("Ya tengo cuenta","I already have an account")+'</button><button class="nv-bv-mas" data-bv="mas">'+Lx("Conoce Lu-Ks ↓","Learn more ↓")+'</button></div>';
+ document.body.appendChild(el);BV=el;void el.offsetWidth;
+ // La animación empieza cuando se va la pantalla de carga (antes quedaba escondida detrás)
+ (function arranca(){if(BV!==el)return;var sp=$1("#splash");if(sp&&!sp.classList.contains("sp-go")&&getComputedStyle(sp).opacity>0.5&&getComputedStyle(sp).display!=="none"){setTimeout(arranca,60);return}requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.add("on")})})})();
+ el.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
+  if(b.classList.contains("nv-bv-lang")){var l=$1('#auth [data-au="lang"]');cerrarBV(true);l&&l.click();setTimeout(function(){bvCerrada=false;bienvenida()},60);return}
+  var k=b.dataset.bv;if(k==="mas"){bvCerrada=true;cerrarBV();return}var t=$1('#auth [data-au="'+k+'"]');bvCerrada=true;cerrarBV();t&&t.click()})}
+function cerrarBV(ya){if(!BV)return;var el=BV;BV=null;if(ya){el.remove();return}el.classList.add("sale");setTimeout(function(){el.remove()},320)}
+setInterval(function(){try{var v=landingVisible();if(v&&!BV&&!bvCerrada)bienvenida();if(!v&&BV)cerrarBV();var a=$1("#auth");if(!a||a.style.display==="none")bvCerrada=false}catch(e){}},150);
+}catch(e){try{console.error("nuevo.js",e)}catch(x){}}})();
 
 window.LKREADY=true;try{render()}catch(e){}
 </script>
