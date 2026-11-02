@@ -1552,21 +1552,55 @@ document.addEventListener("change",function(e){var t=e.target;if(!t||!abierto())
 })();
 
 /* ===== Lu-Ks: portadas de las tarjetas (foto que cada usuario elige para su cuenta) =====
-   Se guardan en users/{uid}/portadas/{id} = {n: nombre de la cuenta, img: dataURL JPEG}. */
+   Se guardan en users/{uid}/portadas/{id} = {n: nombre de la cuenta, img: dataURL JPEG, t}.
+   Reglas para que nunca se pierdan:
+   - Quitar una portada NO borra el documento: deja una "marca" {n, img:'', q:1}. Así se sabe
+     que la quitó la persona (y no que se perdió).
+   - Lo que viene solo del caché del celular nunca se toma como "no hay portadas".
+   - Si Firebase no confirma una escritura, queda en cola (localStorage) y se reintenta.
+   - La app guarda una copia; si Firebase no tiene una portada (ni la marca de quitada)
+     y la cuenta existe, la app la vuelve a subir (LKPORT.reparar). */
 (function(){
-var P={},PC={},un=null,unU="",LISTO=false;
-function avisar(){try{if(window.__lkPortadas)window.__lkPortadas();if(window.__lkSched)window.__lkSched()}catch(e){}}
+var P={},PC={},Q={},un=null,unU="",LISTO=false,SRV=false,ERR="",REINT=null;
+function avisar(){if(!LISTO&&!Object.keys(P).length)return;try{if(window.__lkPortadas)window.__lkPortadas();if(window.__lkSched)window.__lkSched()}catch(e){}}
 // Color promedio de la portada (para el fondo de la pantalla de cuentas)
 function colorDe(n,img){if(!img||PC[n+"|"+img.length])return;var im=new Image();im.onload=function(){try{var c=document.createElement("canvas");c.width=12;c.height=8;var x=c.getContext("2d");x.drawImage(im,0,0,12,8);var d=x.getImageData(0,0,12,8).data,r=0,g=0,b=0,k=0;for(var i=0;i<d.length;i+=4){var mx=Math.max(d[i],d[i+1],d[i+2]),mn=Math.min(d[i],d[i+1],d[i+2]),w=1+(mx-mn)/16;r+=d[i]*w;g+=d[i+1]*w;b+=d[i+2]*w;k+=w}PC[n+"|"+img.length]="rgb("+Math.round(r/k)+","+Math.round(g/k)+","+Math.round(b/k)+")";avisar()}catch(e){}};im.src=img}
 function uid(){try{var u=firebase.auth().currentUser;return u&&u.uid}catch(e){return null}}
 function C(){var u=uid();return u?firebase.firestore().collection("users").doc(u).collection("portadas"):null}
 function idDe(n){var s=String(n||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");return(s||"x").slice(0,60)}
-function sub(){var u=uid();if(!u){if(un){un();un=null}P={};PC={};LISTO=false;unU="";return}if(un&&unU===u)return;if(un)un();unU=u;P={};PC={};LISTO=false;
-  try{un=C().onSnapshot({includeMetadataChanges:false},function(s){var m={};(s.docs||[]).forEach(function(d){var v=d.data&&d.data();if(v&&v.n&&v.img){m[String(v.n)]=v.img;colorDe(String(v.n),v.img)}});P=m;LISTO=true;avisar()},function(){})}catch(e){}}
+// Cola de escrituras pendientes (por usuario), para reintentar si Firebase no confirmó
+function kCola(){return"lkPortCola:"+(uid()||"")}
+function cola(){try{return JSON.parse(localStorage.getItem(kCola())||"{}")||{}}catch(e){return{}}}
+function guardarCola(o){try{if(Object.keys(o).length)localStorage.setItem(kCola(),JSON.stringify(o));else localStorage.removeItem(kCola())}catch(e){}}
+function sub(){var u=uid();if(!u){if(un){un();un=null}P={};PC={};Q={};LISTO=false;SRV=false;unU="";return}if(un&&unU===u)return;if(un)un();unU=u;P={};PC={};Q={};LISTO=false;SRV=false;
+  try{un=C().onSnapshot({includeMetadataChanges:true},function(s){
+    var desdeCache=!!(s.metadata&&s.metadata.fromCache),docs=s.docs||[];
+    // Primera respuesta solo del caché y vacía: no dice nada, esperar a Firebase
+    if(desdeCache&&!docs.length&&!SRV)return;
+    var m={},q={};docs.forEach(function(d){var v=d.data&&d.data();if(!v||!v.n)return;var n=String(v.n);if(v.img){m[n]=v.img;colorDe(n,v.img)}else q[n]=v.t||1});
+    // Lo que sigue en la cola local también cuenta (todavía no llegó a Firebase)
+    var c=cola();Object.keys(c).forEach(function(id){var w=c[id];if(!w||!w.n)return;if(w.img){m[w.n]=w.img;delete q[w.n];colorDe(w.n,w.img)}else{delete m[w.n];q[w.n]=w.t||1}});
+    P=m;Q=q;LISTO=true;if(!desdeCache)SRV=true;avisar()},function(e){ERR=String(e&&e.code||e);try{if(window.__lkPortErr)window.__lkPortErr("leer",ERR)}catch(x){}})}catch(e){}
+  reintentar()}
 try{firebase.auth().onAuthStateChanged(function(){setTimeout(sub,60)})}catch(e){}
-function poner(n,img){var c=C();if(!c||!n)return Promise.resolve();var b=firebase.firestore().batch(),r=c.doc(idDe(n));if(img){P[n]=img;colorDe(n,img);avisar();b.set(r,{n:n,img:img,t:Date.now()})}else{delete P[n];b.delete(r);avisar()}return b.commit()}
-window.LKPORT={listo:function(){return LISTO},todas:function(){return P},get:function(n){return P[n]||""},color:function(n){var i=P[n];return i?(PC[n+"|"+i.length]||""):""},set:poner,
-  mover:function(a,b){if(!a||!b||a===b||!P[a])return Promise.resolve();var img=P[a];return poner(b,img).then(function(){return poner(a,"")})}};
+function escribir(id,w){var c=C();if(!c)return Promise.reject(new Error("sin sesión"));return c.doc(id).set(w)}
+function quitarDeCola(id,t){var a=cola();if(a[id]&&a[id].t===t){delete a[id];guardarCola(a)}}
+function reintentar(){if(REINT){clearTimeout(REINT);REINT=null}var c=cola(),ids=Object.keys(c);if(!ids.length||!uid())return;
+  Promise.all(ids.map(function(id){var w=c[id];return escribir(id,w).then(function(){quitarDeCola(id,w.t)})})).then(function(){ERR=""}).catch(function(e){ERR=String(e&&e.code||e);REINT=setTimeout(reintentar,20000)})}
+try{window.addEventListener("online",function(){reintentar()})}catch(e){}
+// Guarda (img) o quita (img vacío = marca de quitada). Nunca borra el documento.
+function poner(n,img){n=String(n||"").trim();if(!n||!uid())return Promise.resolve();var id=idDe(n),w={n:n,img:img||"",t:Date.now()};if(!img)w.q=1;
+  if(img){P[n]=img;delete Q[n];colorDe(n,img)}else{delete P[n];Q[n]=w.t}LISTO=LISTO||!!img;avisar();
+  var c=cola();c[id]=w;guardarCola(c);
+  return escribir(id,w).then(function(){quitarDeCola(id,w.t);ERR=""}).catch(function(e){ERR=String(e&&e.code||e);try{if(window.__lkPortErr)window.__lkPortErr("guardar",ERR)}catch(x){}if(!REINT)REINT=setTimeout(reintentar,20000)})}
+function cuentasActuales(){try{if(typeof ACC==="undefined"||!ACC||!ACC.length)return null;var o={};ACC.forEach(function(a){if(a&&a.n)o[String(a.n)]=1});return o}catch(e){return null}}
+window.LKPORT={listo:function(){return LISTO},servidor:function(){return SRV},todas:function(){return P},quitadas:function(){return Q},error:function(){return ERR},
+  get:function(n){return P[n]||""},color:function(n){var i=P[n];return i?(PC[n+"|"+i.length]||""):""},set:poner,
+  mover:function(a,b){a=String(a||"").trim();b=String(b||"").trim();if(!a||!b||a===b||!P[a])return Promise.resolve();var img=P[a];
+    if(idDe(a)===idDe(b)){delete P[a];return poner(b,img)}            // mismo documento: solo cambia el nombre
+    return poner(b,img).then(function(){return poner(a,"")})},
+  // La app manda su copia {nombre: img}; se sube lo que Firebase no tiene (ni marcado como quitado)
+  reparar:function rep(mapa,n){if(!mapa)return 0;var ex=cuentasActuales();if(!SRV||!ex){if((n||0)<10)setTimeout(function(){rep(mapa,(n||0)+1)},3000);return 0}var k=0;Object.keys(mapa).forEach(function(n){var img=mapa[n];if(!img||P[n]||Q[n]||!ex[n])return;k++;poner(n,img)});return k}};
 })();
 
 /* ===== Lu-Ks: acceso a Lu-Ks Tienda (licencias) ===== */
