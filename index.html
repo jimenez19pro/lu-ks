@@ -1462,7 +1462,13 @@ function procesar(id,ref){
   pintar();
 }
 function listo(){try{return!!(uid()&&typeof AJOK!=="undefined"&&AJOK&&typeof ACK!=="undefined"&&ACK&&typeof MCP!=="undefined"&&MCP)}catch(e){return false}}
-function tick(){escuchar();if(!listo()||document.hidden)return;Object.keys(PEND).forEach(function(id){if(!HECHO[id])procesar(id,PEND[id])})}
+// Reclamar el dato antes de guardarlo: si Lu-Ks está abierta en dos dispositivos, solo uno lo
+// procesa (el que logra borrarlo del buzón dentro de una transacción). Sin transacciones (pruebas) se procesa directo.
+var RECL={};
+function reclamar(id,ref){var db=firebase.firestore();if(!db.runTransaction)return Promise.resolve(true);
+  return db.runTransaction(function(t){return t.get(ref).then(function(d){if(!d.exists)return false;t.delete(ref);return true})}).catch(function(){return false})}
+function tick(){escuchar();if(!listo()||document.hidden)return;Object.keys(PEND).forEach(function(id){if(HECHO[id]||RECL[id])return;RECL[id]=1;var ref=PEND[id];
+  reclamar(id,ref).then(function(mio){delete RECL[id];if(mio)procesar(id,ref);else{HECHO[id]=1;delete PEND[id]}})})}
 function escuchar(){var u=uid(),k=llave();if(!u||!k){if(un){un();un=null;unK=""}return}if(un&&unK===u+k)return;if(un)un();unK=u+k;
   try{un=firebase.firestore().collection("buzon").doc(k).collection("items").onSnapshot({includeMetadataChanges:false},function(s){(s.docs||[]).forEach(function(d){var id=String(d.id).split("/").pop();if(!HECHO[id])PEND[id]=d.ref});setTimeout(tick,50)},function(){})}catch(e){}}
 setInterval(tick,2500);
@@ -1548,17 +1554,18 @@ document.addEventListener("change",function(e){var t=e.target;if(!t||!abierto())
 /* ===== Lu-Ks: portadas de las tarjetas (foto que cada usuario elige para su cuenta) =====
    Se guardan en users/{uid}/portadas/{id} = {n: nombre de la cuenta, img: dataURL JPEG}. */
 (function(){
-var P={},PC={},un=null,unU="";
+var P={},PC={},un=null,unU="",LISTO=false;
+function avisar(){try{if(window.__lkPortadas)window.__lkPortadas();if(window.__lkSched)window.__lkSched()}catch(e){}}
 // Color promedio de la portada (para el fondo de la pantalla de cuentas)
-function colorDe(n,img){if(!img||PC[n+"|"+img.length])return;var im=new Image();im.onload=function(){try{var c=document.createElement("canvas");c.width=12;c.height=8;var x=c.getContext("2d");x.drawImage(im,0,0,12,8);var d=x.getImageData(0,0,12,8).data,r=0,g=0,b=0,k=0;for(var i=0;i<d.length;i+=4){var mx=Math.max(d[i],d[i+1],d[i+2]),mn=Math.min(d[i],d[i+1],d[i+2]),w=1+(mx-mn)/16;r+=d[i]*w;g+=d[i+1]*w;b+=d[i+2]*w;k+=w}PC[n+"|"+img.length]="rgb("+Math.round(r/k)+","+Math.round(g/k)+","+Math.round(b/k)+")";if(window.__lkSched)window.__lkSched()}catch(e){}};im.src=img}
+function colorDe(n,img){if(!img||PC[n+"|"+img.length])return;var im=new Image();im.onload=function(){try{var c=document.createElement("canvas");c.width=12;c.height=8;var x=c.getContext("2d");x.drawImage(im,0,0,12,8);var d=x.getImageData(0,0,12,8).data,r=0,g=0,b=0,k=0;for(var i=0;i<d.length;i+=4){var mx=Math.max(d[i],d[i+1],d[i+2]),mn=Math.min(d[i],d[i+1],d[i+2]),w=1+(mx-mn)/16;r+=d[i]*w;g+=d[i+1]*w;b+=d[i+2]*w;k+=w}PC[n+"|"+img.length]="rgb("+Math.round(r/k)+","+Math.round(g/k)+","+Math.round(b/k)+")";avisar()}catch(e){}};im.src=img}
 function uid(){try{var u=firebase.auth().currentUser;return u&&u.uid}catch(e){return null}}
 function C(){var u=uid();return u?firebase.firestore().collection("users").doc(u).collection("portadas"):null}
 function idDe(n){var s=String(n||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");return(s||"x").slice(0,60)}
-function sub(){var u=uid();if(!u){if(un){un();un=null}P={};unU="";return}if(un&&unU===u)return;if(un)un();unU=u;
-  try{un=C().onSnapshot({includeMetadataChanges:false},function(s){var m={};(s.docs||[]).forEach(function(d){var v=d.data&&d.data();if(v&&v.n&&v.img){m[String(v.n)]=v.img;colorDe(String(v.n),v.img)}});P=m;try{if(window.__lkSched)window.__lkSched()}catch(e){}},function(){})}catch(e){}}
+function sub(){var u=uid();if(!u){if(un){un();un=null}P={};PC={};LISTO=false;unU="";return}if(un&&unU===u)return;if(un)un();unU=u;P={};PC={};LISTO=false;
+  try{un=C().onSnapshot({includeMetadataChanges:false},function(s){var m={};(s.docs||[]).forEach(function(d){var v=d.data&&d.data();if(v&&v.n&&v.img){m[String(v.n)]=v.img;colorDe(String(v.n),v.img)}});P=m;LISTO=true;avisar()},function(){})}catch(e){}}
 try{firebase.auth().onAuthStateChanged(function(){setTimeout(sub,60)})}catch(e){}
-function poner(n,img){var c=C();if(!c||!n)return Promise.resolve();var b=firebase.firestore().batch(),r=c.doc(idDe(n));if(img){P[n]=img;colorDe(n,img);b.set(r,{n:n,img:img,t:Date.now()})}else{delete P[n];b.delete(r)}return b.commit()}
-window.LKPORT={get:function(n){return P[n]||""},color:function(n){var i=P[n];return i?(PC[n+"|"+i.length]||""):""},set:poner,
+function poner(n,img){var c=C();if(!c||!n)return Promise.resolve();var b=firebase.firestore().batch(),r=c.doc(idDe(n));if(img){P[n]=img;colorDe(n,img);avisar();b.set(r,{n:n,img:img,t:Date.now()})}else{delete P[n];b.delete(r);avisar()}return b.commit()}
+window.LKPORT={listo:function(){return LISTO},todas:function(){return P},get:function(n){return P[n]||""},color:function(n){var i=P[n];return i?(PC[n+"|"+i.length]||""):""},set:poner,
   mover:function(a,b){if(!a||!b||a===b||!P[a])return Promise.resolve();var img=P[a];return poner(b,img).then(function(){return poner(a,"")})}};
 })();
 
