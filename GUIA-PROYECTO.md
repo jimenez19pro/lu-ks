@@ -532,3 +532,14 @@ Jose: "actualiza la página e igualmente el video". Archivos: `pubsrc/land.js` (
 - **Página de presentación**: las 3 capturas (ES e inglés) ahora son Inicio, Mis cuentas y Nueva cuenta (480×960 JPEG 82 %).
 - **Video** (25 s, 1080×1920): mismas escenas, tiempos y voz/música del video anterior (el audio se copió del `lu-ks-video.mp4` publicado), con las capturas nuevas; en la primera escena, cuando sale "Todas tus cuentas juntas" (5,15 s), el celular pasa al carrusel. Proceso: copiar `l2-*.png` (VH=844) a `promo/`, `python3 gen.py`, `node render2.js video-luks.html 25 frl`, `ffmpeg -framerate 30 -i frl/%04d.jpg -i <video anterior> -map 0:v -map 1:a -c:v libx264 -crf 22 -pix_fmt yuv420p -c:a copy -t 25 -movflags +faststart lu-ks-video.mp4`. Portada del video: segundo 5 (540×960).
 - **Imagen para compartir** (`og-luks.jpg`, WhatsApp): Inicio nuevo + carrusel.
+
+## 57. Portadas: solo el botón "Quitar" puede quitarlas (2 nov 2026, tarde)
+Jose: las portadas se volvieron a borrar, en la app y en la web, sin ningún aviso (o sea, sí se habían guardado en Firebase; algo las quitó). Pidió una solución definitiva. Archivos: `pubsrc/port.js`, `pubsrc/nuevo.js` (van en `index.html`), `App.js`, `puente.js`, `portadas.js` (app 1.6.2), pruebas `tportadas.js` (30), `tdiseno.js`, `tnuevo.js`.
+Se quitaron todas las formas automáticas de quitar una portada:
+1. `LKPORT.set(nombre, '')` ya no hace nada. Quitar solo existe como `LKPORT.quitar(nombre)`, que se llama únicamente cuando la persona toca "Quitar" en el formulario (`portada: ''`).
+2. **Cambiar el nombre** de una cuenta copia la foto al nombre nuevo y **deja** la del nombre viejo (antes la marcaba como quitada).
+3. **Eliminar una cuenta** ya no borra su portada.
+4. La marca de quitada ahora dice `por: "quitar"`, guarda la foto anterior (`ant`) y desde dónde se quitó (`de`). Las marcas viejas sin `por: "quitar"` (las que pudieron hacer los cambios de nombre o borrados) **no cuentan**: la copia del celular puede volver a subir esa portada. La cola local también descarta marcas viejas.
+5. **Cerrar sesión ya no borra la copia del celular**: `portadas.json` ahora es `{v:2, ultimo, por:{uid:{…}}}` (separada por usuario, así otra persona no ve las de Jose); al cerrar sesión solo se deja de mostrar. El puente manda el `uid` en el mensaje `portadas` (`u`). El archivo viejo (sin usuario) se adopta para el primer usuario que entre.
+Las portadas que se perdieron hoy no se pueden recuperar (no quedaron en Firebase ni en el celular): hay que ponerlas una vez más. Desde esta versión, si vuelve a pasar algo, la marca guardada dirá exactamente desde dónde se quitó.
+Todas las pruebas en verde: `tportadas` 30, `tdiseno` 34, `tnuevo` 26, `tbordes` 13, `tauto` 38, `tventanas` 16, `tinicio` 49, `tmov` 41, `trep` 40, `tmas` 37, `tcopia` 13, `trecordatorios` 14, `tdoble` 1.

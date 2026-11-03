@@ -1807,14 +1807,15 @@ function C(){var u=uid();return u?firebase.firestore().collection("users").doc(u
 function idDe(n){var s=String(n||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");return(s||"x").slice(0,60)}
 // Cola de escrituras pendientes (por usuario), para reintentar si Firebase no confirmó
 function kCola(){return"lkPortCola:"+(uid()||"")}
-function cola(){try{return JSON.parse(localStorage.getItem(kCola())||"{}")||{}}catch(e){return{}}}
+// (las marcas de quitada viejas, que no vinieron del botón "Quitar", se descartan)
+function cola(){var o={};try{o=JSON.parse(localStorage.getItem(kCola())||"{}")||{}}catch(e){}Object.keys(o).forEach(function(k){var w=o[k];if(!w||(!w.img&&w.por!=="quitar"))delete o[k]});return o}
 function guardarCola(o){try{if(Object.keys(o).length)localStorage.setItem(kCola(),JSON.stringify(o));else localStorage.removeItem(kCola())}catch(e){}}
 function sub(){var u=uid();if(!u){if(un){un();un=null}P={};PC={};Q={};LISTO=false;SRV=false;unU="";return}if(un&&unU===u)return;if(un)un();unU=u;P={};PC={};Q={};LISTO=false;SRV=false;
   try{un=C().onSnapshot({includeMetadataChanges:true},function(s){
     var desdeCache=!!(s.metadata&&s.metadata.fromCache),docs=s.docs||[];
     // Primera respuesta solo del caché y vacía: no dice nada, esperar a Firebase
     if(desdeCache&&!docs.length&&!SRV)return;
-    var m={},q={};docs.forEach(function(d){var v=d.data&&d.data();if(!v||!v.n)return;var n=String(v.n);if(v.img){m[n]=v.img;colorDe(n,v.img)}else q[n]=v.t||1});
+    var m={},q={};docs.forEach(function(d){var v=d.data&&d.data();if(!v||!v.n)return;var n=String(v.n);if(v.img){m[n]=v.img;colorDe(n,v.img)}else if(v.por==="quitar")q[n]=v.t||1});
     // Lo que sigue en la cola local también cuenta (todavía no llegó a Firebase)
     var c=cola();Object.keys(c).forEach(function(id){var w=c[id];if(!w||!w.n)return;if(w.img){m[w.n]=w.img;delete q[w.n];colorDe(w.n,w.img)}else{delete m[w.n];q[w.n]=w.t||1}});
     P=m;Q=q;LISTO=true;if(!desdeCache)SRV=true;avisar()},function(e){ERR=String(e&&e.code||e);try{if(window.__lkPortErr)window.__lkPortErr("leer",ERR)}catch(x){}})}catch(e){}
@@ -1826,16 +1827,19 @@ function reintentar(){if(REINT){clearTimeout(REINT);REINT=null}var c=cola(),ids=
   Promise.all(ids.map(function(id){var w=c[id];return escribir(id,w).then(function(){quitarDeCola(id,w.t)})})).then(function(){ERR=""}).catch(function(e){ERR=String(e&&e.code||e);REINT=setTimeout(reintentar,20000)})}
 try{window.addEventListener("online",function(){reintentar()})}catch(e){}
 // Guarda (img) o quita (img vacío = marca de quitada). Nunca borra el documento.
-function poner(n,img){n=String(n||"").trim();if(!n||!uid())return Promise.resolve();var id=idDe(n),w={n:n,img:img||"",t:Date.now()};if(!img)w.q=1;
+// Solo se quita una portada si la persona tocó "Quitar" (motivo "quitar"); nada más puede quitarla.
+// La marca de quitada guarda la foto anterior (ant) para poder recuperarla.
+function poner(n,img,motivo){n=String(n||"").trim();if(!n||!uid())return Promise.resolve();if(!img&&motivo!=="quitar")return Promise.resolve();var id=idDe(n),w={n:n,img:img||"",t:Date.now()};if(!img){w.q=1;w.por="quitar";w.ant=P[n]||"";w.de=String(navigator.userAgent||"").slice(0,80)}
   if(img){P[n]=img;delete Q[n];colorDe(n,img)}else{delete P[n];Q[n]=w.t}LISTO=LISTO||!!img;avisar();
   var c=cola();c[id]=w;guardarCola(c);
   return escribir(id,w).then(function(){quitarDeCola(id,w.t);ERR=""}).catch(function(e){ERR=String(e&&e.code||e);try{if(window.__lkPortErr)window.__lkPortErr("guardar",ERR)}catch(x){}if(!REINT)REINT=setTimeout(reintentar,20000)})}
 function cuentasActuales(){try{if(typeof ACC==="undefined"||!ACC||!ACC.length)return null;var o={};ACC.forEach(function(a){if(a&&a.n)o[String(a.n)]=1});return o}catch(e){return null}}
 window.LKPORT={listo:function(){return LISTO},servidor:function(){return SRV},todas:function(){return P},quitadas:function(){return Q},error:function(){return ERR},
-  get:function(n){return P[n]||""},color:function(n){var i=P[n];return i?(PC[n+"|"+i.length]||""):""},set:poner,
-  mover:function(a,b){a=String(a||"").trim();b=String(b||"").trim();if(!a||!b||a===b||!P[a])return Promise.resolve();var img=P[a];
-    if(idDe(a)===idDe(b)){delete P[a];return poner(b,img)}            // mismo documento: solo cambia el nombre
-    return poner(b,img).then(function(){return poner(a,"")})},
+  get:function(n){return P[n]||""},color:function(n){var i=P[n];return i?(PC[n+"|"+i.length]||""):""},
+  set:function(n,img){return img?poner(n,img):Promise.resolve()},          // con foto: guardar. Vacío: no hace nada
+  quitar:function(n){return poner(n,"","quitar")},                        // solo desde el botón "Quitar"
+  // Cambio de nombre: la foto se copia al nombre nuevo; la del nombre viejo se deja (no se borra nada)
+  mover:function(a,b){a=String(a||"").trim();b=String(b||"").trim();if(!a||!b||a===b||!P[a]||P[b])return Promise.resolve();return poner(b,P[a])},
   // La app manda su copia {nombre: img}; se sube lo que Firebase no tiene (ni marcado como quitado)
   reparar:function rep(mapa,n){if(!mapa)return 0;var ex=cuentasActuales();if(!SRV||!ex){if((n||0)<10)setTimeout(function(){rep(mapa,(n||0)+1)},3000);return 0}var k=0;Object.keys(mapa).forEach(function(n){var img=mapa[n];if(!img||P[n]||Q[n]||!ex[n])return;k++;poner(n,img)});return k}};
 })();
@@ -2174,8 +2178,8 @@ function guardarEnWeb(d){var ultimo="";AE=d.i>=0?+d.i:-1;ADEL=!!d.del;
  var antes=JSON.stringify(ACC),n0=ACC.length,nViejo=AE>=0&&ACC[AE]?ACC[AE].n:"";var t0=window.toast;window.toast=function(x){ultimo=String(x||"");return t0.apply(this,arguments)};
  try{saveAcc2(!!d.del)}finally{window.toast=t0}
  var ok=!ultimo&&(JSON.stringify(ACC)!==antes||AE>=0);
- if(ok&&window.LKPORT&&!d.del){var nN=(ACC[AE>=0?AE:ACC.length-1]||{}).n;if(nN&&d.portada!==undefined&&(d.portada||(LKPORT.listo&&LKPORT.listo()))){if(nViejo&&nViejo!==nN)LKPORT.set(nViejo,"");LKPORT.set(nN,d.portada||"")}else if(nN&&nViejo&&nViejo!==nN)LKPORT.mover(nViejo,nN)}
- else if(window.LKPORT&&d.del&&nViejo)LKPORT.set(nViejo,"");
+ // Una portada solo se quita con "Quitar"; borrar o renombrar una cuenta no borra fotos
+ if(ok&&window.LKPORT&&!d.del){var nN=(ACC[AE>=0?AE:ACC.length-1]||{}).n;if(nN&&d.portada)LKPORT.set(nN,d.portada);else if(nN&&d.portada===""&&LKPORT.quitar)LKPORT.quitar(nN);else if(nN&&nViejo&&nViejo!==nN)LKPORT.mover(nViejo,nN)}
  return{ok:ok,i:ok&&!d.del?(AE>=0?AE:ACC.length>n0?ACC.length-1:-1):-1,msg:ok?"":(ultimo||Lx("No se pudo guardar. Intenta otra vez.","Could not save. Try again."))}}
 function guardar(){var f=FX.f,cr=f.tipo==="credito",ef=f.tipo==="efectivo",er=function(s){FX.err=s;var e=$1("#nv-err",FX.el);if(e){e.textContent=s;e.scrollIntoView({block:"center",behavior:"smooth"})}};
  if(document.activeElement)document.activeElement.blur();
